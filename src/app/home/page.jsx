@@ -1,5 +1,4 @@
 import Image from "next/image";
-import LoginForm from "@/components/LoginForm";
 import Logout from "@/components/Logout";
 import { auth } from "@/auth";
 
@@ -27,7 +26,7 @@ const HomePage = async () => {
                 </>
             ) : (
                 <h1 className="text-3xl my-2">
-                    Welcome, {session?.user?.email}
+                    Welcome, {session?.user?.name}
                 </h1>
             )}
             <Logout />

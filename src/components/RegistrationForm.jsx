@@ -1,7 +1,5 @@
 "use client"
 
-import SocialLogins from "./SocialLogins";
-
 import { useRouter } from "next/navigation";
 
 const RegistrationForm = () => {
@@ -14,6 +12,7 @@ const RegistrationForm = () => {
       try {
         const formData = new FormData(event.currentTarget);
 
+        const userId = 'YogaUser_' + Date.now();
         const name = formData.get('name');
         const email = formData.get('email');
         const password = formData.get('password');
@@ -24,6 +23,7 @@ const RegistrationForm = () => {
             "content-type": "application/json",
           },
           body: JSON.stringify({
+            userId,
             name,
             email,
             password
@@ -79,7 +79,6 @@ const RegistrationForm = () => {
                     Register
                 </button>
             </form>
-            <SocialLogins />
         </>
     );
 };

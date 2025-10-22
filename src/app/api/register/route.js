@@ -5,9 +5,9 @@ import bcrypt from "bcryptjs";
 import { dbConnect } from "@/lib/mongo";
 
 export const POST = async (request) => {
-  const {name, email, password} = await request.json();
+  const {userId, name, email, password} = await request.json();
 
-  console.log(name, email, password);
+  console.log(userId, name, email, password);
 
   // Create a DB Conenction
   await dbConnect();
@@ -15,6 +15,7 @@ export const POST = async (request) => {
   const hashedPassword = await bcrypt.hash(password, 5);
   // Form a DB payload
   const newUser = {
+    userId,
     name,
     password: hashedPassword,
     email

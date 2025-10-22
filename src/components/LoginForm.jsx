@@ -1,7 +1,5 @@
 "use client";
 
-import SocialLogins from "./SocialLogins";
-
 import { doCredentialLogin } from "@/app/actions";
 
 import { useState } from "react";
@@ -52,7 +50,6 @@ const LoginForm = () => {
                     Ceredential Login
                 </button>
             </form>
-            <SocialLogins />
         </>
     );
 };
