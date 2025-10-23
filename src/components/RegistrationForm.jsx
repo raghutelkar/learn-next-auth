@@ -16,6 +16,7 @@ const RegistrationForm = () => {
         const name = formData.get('name');
         const email = formData.get('email');
         const password = formData.get('password');
+        const role = 'user';
 
         const response = await fetch(`/api/register`, {
           method: 'POST',
@@ -26,7 +27,8 @@ const RegistrationForm = () => {
             userId,
             name,
             email,
-            password
+            password,
+            role
           })
         });
 
