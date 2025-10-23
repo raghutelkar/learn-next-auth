@@ -3,6 +3,7 @@ import { auth } from "@/auth";
 import Link from "next/link";
 import AddSessionsForm from "@/components/AddSessionsForm";
 import DeleteSessionButton from "@/components/DeleteSessionButton";
+import EditSessionButton from "@/components/EditSessionButton";
 
 import { redirect } from "next/navigation";
 
@@ -45,7 +46,7 @@ const HomePage = async () => {
                         {data?.sessions.map(session => (
                             <li key={session.id} className="border border-black p-2">
                                 {new Date(session.date).toLocaleString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })} - {new Date(session.start).toLocaleString('en-US', { hour: 'numeric', minute: 'numeric', second: 'numeric' })} to {new Date(session.end).toLocaleString('en-US', { hour: 'numeric', minute: 'numeric', second: 'numeric' })}
-                            <button className="bg-blue-300 m-4 rounded p-2 hover:bg-blue-400 transition-colors">Edit</button>
+                            <EditSessionButton session={session} />
                             <DeleteSessionButton sessionId={session?.sessionId} />
                             </li>
                         ))}
@@ -58,7 +59,6 @@ const HomePage = async () => {
                     </p>
                     )}
                     <br/>
-                    <h2>Add your Session:</h2>
                     <AddSessionsForm userId={data?.profile?.userId} />
                 </>
             )}

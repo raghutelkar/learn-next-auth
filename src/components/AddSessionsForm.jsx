@@ -66,6 +66,7 @@ const AddSessionsForm = ({ userId }) => {
 
     return (
         <>
+            <h2>Add your Session:</h2>
             <form 
                 onSubmit={handleSubmit}
                 className="my-5 flex flex-col items-center border p-3 border-gray-200 rounded-md w-full max-w-md">

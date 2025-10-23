@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { createSession, deleteSession } from "@/queries/sessions";
+import { createSession, deleteSession, updateSession } from "@/queries/sessions";
 
 import { dbConnect } from "@/lib/mongo";
 
@@ -63,4 +63,37 @@ export const DELETE = async (request) => {
       status: error.message === 'Session not found' ? 404 : 500,
     });
   }
+};
+
+export const PUT = async (request) => {
+    try {
+        const { searchParams } = new URL(request.url);
+        const sessionId = searchParams.get('sessionId');
+
+        if (!sessionId) {
+            return new NextResponse("Session ID is required", {
+                status: 400,
+            });
+        }
+
+        const updates = await request.json();
+
+        // Connect to database
+        await dbConnect();
+
+        // Update the session
+        await updateSession(sessionId, updates);
+
+        return new NextResponse("Session updated successfully", {
+            status: 200,
+            headers: {
+                'Cache-Control': 'no-store, max-age=0',
+            }
+        });
+
+    } catch (error) {
+        return new NextResponse(error.message, {
+            status: error.message === 'Session not found' ? 404 : 500,
+        });
+    }
 };

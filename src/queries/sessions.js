@@ -19,3 +19,19 @@ export async function deleteSession(sessionId) {
     throw new Error(e.message);
   }
 }
+
+export async function updateSession(sessionId, updates) {
+  try {
+    const result = await Session.findOneAndUpdate(
+      { sessionId: sessionId },
+      updates,
+      { new: true }
+    );
+    if (!result) {
+      throw new Error('Session not found');
+    }
+    return result;
+  } catch (e) {
+    throw new Error(e.message);
+  }
+}
