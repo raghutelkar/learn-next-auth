@@ -4,6 +4,7 @@ import Link from "next/link";
 import AddSessionsForm from "@/components/AddSessionsForm";
 import DeleteSessionButton from "@/components/DeleteSessionButton";
 import EditSessionButton from "@/components/EditSessionButton";
+import fetchUserData from "@/app/api/utils/fetchUserData";
 
 import { redirect } from "next/navigation";
 
@@ -15,21 +16,6 @@ const HomePage = async () => {
 
     if (!session?.user) redirect("/");
 
-    const fetchUserData = async (name) => {
-        try {
-            const response = await fetch(`http://localhost:3000/api/users?name=${name}`, {
-                cache: 'no-cache',
-                next: { revalidate: 0, tags: ['sessions'] }
-            });
-                if (!response.ok) {
-                throw new Error('Network response was not ok');
-                }
-            return await response.json();
-        } catch (error) {
-            console.error('Error fetching user data:', error);
-            throw error;
-        }
-    }
     const data = await fetchUserData(session?.user?.name);
     data.sessions = data.sessions.sort((a, b) => new Date(a.date) - new Date(b.date));
 
@@ -53,10 +39,15 @@ const HomePage = async () => {
                     </ul>
                     }
                     {data?.profile?.role === 'admin' && (
-                        <p className="my-3">
+                    <>
+                    <p className="my-3">
                         Don't you have an account?
-                        <Link href="register" className="mx-2 underline">Register</Link>
+                        <Link href="/register" className="mx-2 underline">Register</Link>
                     </p>
+                    <p>
+                        adminPage <Link href='/admin' className="mx-2 underline">Go to Admin Page</Link>
+                    </p>
+                    </>
                     )}
                     <br/>
                     <AddSessionsForm userId={data?.profile?.userId} />
