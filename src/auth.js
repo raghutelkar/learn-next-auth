@@ -13,6 +13,47 @@ export const {
     signIn,
     signOut,
 } = NextAuth({
+    callbacks: {
+        async signIn({ user, account, profile }) {
+            try {
+                if (account.provider === "credentials") {
+                    return true;
+                }
+                
+                // For social logins, check if user exists and get their role
+                const existingUser = await User.findOne({ email: user.email });
+                if (existingUser) {
+                    user.role = existingUser.role;
+                } else {
+                    // Create new user with default role for social logins
+                    const newUser = await User.create({
+                        userId: `YogaUser_${Date.now()}`,
+                        name: user.name,
+                        email: user.email,
+                        password: Math.random().toString(36).slice(-8), // random password for social login
+                        role: 'user' // default role
+                    });
+                    user.role = 'user';
+                }
+                return true;
+            } catch (error) {
+                console.error("Error in signIn callback:", error);
+                return false;
+            }
+        },
+        async jwt({ token, user, account }) {
+            if (user) {
+                token.role = user.role;
+            }
+            return token;
+        },
+        async session({ session, token }) {
+            if (session?.user) {
+                session.user.role = token.role;
+            }
+            return session;
+        },
+    },
     session: {
       strategy: 'jwt',
     },
@@ -36,7 +77,12 @@ export const {
                         );
 
                         if (isMatch) {
-                            return user;
+                            return {
+                                id: user._id,
+                                name: user.name,
+                                email: user.email,
+                                role: user.role
+                            };
                         } else {
                             throw new Error("Email or Password is not correct");
                         }

@@ -1,5 +1,6 @@
 import { Inter } from "next/font/google";
 import "./globals.css";
+import { SessionProvider } from 'next-auth/react'
 
 import { dbConnect } from "@/lib/mongo";
 
@@ -14,7 +15,11 @@ export default async function RootLayout({ children }) {
   const conn = await dbConnect();
   return (
     <html lang="en">
-      <body className={inter.className}>{children}</body>
+      <body className={inter.className}>
+      <SessionProvider>
+        {children}
+      </SessionProvider>
+      </body>
     </html>
   );
 }

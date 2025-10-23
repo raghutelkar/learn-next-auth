@@ -1,10 +1,19 @@
 "use client"
 
+import { useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { useSession } from 'next-auth/react';
+import { redirect } from 'next/navigation';
 
 const RegistrationForm = () => {
-
+    const { data: session } = useSession();
     const router = useRouter();
+
+    useEffect(() => {
+        if (!session || session?.user?.role !== 'admin') {
+            redirect('/');
+        }
+    }, [session]);
 
     async function handleSubmit(event) {
       event.preventDefault();

@@ -1,12 +1,21 @@
 'use client'
 import { useState, useEffect } from 'react';
+import { useSession } from 'next-auth/react';
+import { redirect } from 'next/navigation';
 import fetchUserData from "@/app/api/utils/fetchUserData";
 
 const AdminPage = () => {
+    const { data: session } = useSession();
     const [selectedUser, setSelectedUser] = useState('');
     const [userData, setUserData] = useState(null);
     const [loading, setLoading] = useState(false);
     const [selectedMonth, setSelectedMonth] = useState('');
+
+    useEffect(() => {
+        if (!session || session?.user?.role !== 'admin') {
+            redirect('/');
+        }
+    }, [session]);
 
     const users = [
         { userId: 'YogaUser_1761134495692', name: 'Varsha' },
