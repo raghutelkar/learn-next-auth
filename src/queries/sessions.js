@@ -7,3 +7,15 @@ export async function createSession(session) {
     throw new Error(e)
   }
 }
+
+export async function deleteSession(sessionId) {
+  try {
+    const result = await Session.deleteOne({ sessionId: sessionId });
+    if (result.deletedCount === 0) {
+      throw new Error('Session not found');
+    }
+    return result;
+  } catch (e) {
+    throw new Error(e.message);
+  }
+}

@@ -30,11 +30,10 @@ const AddSessionsForm = ({ userId }) => {
             const formData = new FormData(event.currentTarget);
             
             // Get the selected date and time slot
-            const selectedDate = formData.get('date'); // Format: YYYY-MM-DD
+            const selectedDate = formData.get('date');
             const selectedTimeSlot = formData.get('timeSlot');
             const [startTime, endTime] = selectedTimeSlot.split(',');
 
-            // Create full ISO datetime strings
             const startDateTime = new Date(`${selectedDate}T${startTime}:00`);
             const endDateTime = new Date(`${selectedDate}T${endTime}:00`);
 
@@ -47,13 +46,16 @@ const AddSessionsForm = ({ userId }) => {
                 body: JSON.stringify({
                     userId,
                     sessionId: 's_' + Date.now(),
-                    date: new Date(selectedDate).toISOString(), // Just the date
-                    start: startDateTime.toISOString(), // Full datetime for start
-                    end: endDateTime.toISOString(),     // Full datetime for end
+                    date: new Date(selectedDate).toISOString(),
+                    start: startDateTime.toISOString(),
+                    end: endDateTime.toISOString(),
                 })
             });
 
             if (response.status === 201) {
+                // Force revalidation of all cached data
+                router.refresh();
+                await new Promise(resolve => setTimeout(resolve, 100)); // Small delay to ensure refresh
                 router.push('/profile');
             }
 

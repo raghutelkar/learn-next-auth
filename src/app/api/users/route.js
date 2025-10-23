@@ -31,6 +31,7 @@ export async function GET(request) {
         role: profile.role
       },
       sessions: sessions.map(session => ({
+        sessionId: session.sessionId,
         date: session.date,
         start: session.start,
         end: session.end,
