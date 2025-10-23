@@ -14,9 +14,9 @@ const RegistrationForm = () => {
 
         const userId = 'YogaUser_' + Date.now();
         const name = formData.get('name');
+        const role = formData.get('role');
         const email = formData.get('email');
         const password = formData.get('password');
-        const role = 'user';
 
         const response = await fetch(`/api/register`, {
           method: 'POST',
@@ -55,6 +55,18 @@ const RegistrationForm = () => {
                     />
                 </div>
                 <div className="my-2">
+                    <label htmlFor="role">Role</label>
+                    <select
+                        className="border mx-2 border-gray-500 rounded"
+                        name="role"
+                        id="role"
+                        defaultValue="user"
+                    >
+                        <option value="user">User</option>
+                        <option value="admin">Admin</option>
+                    </select>
+                </div>
+                <div className="my-2">  
                     <label htmlFor="email">Email Address</label>
                     <input
                         className="border mx-2 border-gray-500 rounded"

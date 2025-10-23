@@ -10,24 +10,16 @@ const sessionSchema = new Schema({
     required: true,
   },
   date: {
-    type: Date,
+    type: String,
     required: true,
   },
   start: {
-    type: Date,
+    type: String,
     required: true,
   },
   end: {
-    type: Date,
-    required: true,
-  },
-  status: {
     type: String,
     required: true,
-  },
-  notes: {
-    type: String,
-    required: false,
   }
 }, { timestamps: true });
 

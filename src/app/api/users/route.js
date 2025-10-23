@@ -1,29 +1,44 @@
 import { User } from "@/model/user-model";
 import { Session } from "@/model/session-model";
-
-import { NextResponse } from "next/server"
-import { dbConnect } from "@/lib/mongo"
+import { NextResponse } from "next/server";
+import { dbConnect } from "@/lib/mongo";
 
 export async function GET(request) {
-  await dbConnect();
-
-  const name = 'Varsha'
-
   try {
-    const userData = await User.findOne({ name });
-    if(!userData === undefined) return new Response(JSON.stringify([]), {
-        status: 404
-    })
-    const userId = userData?.userId
-    const sessions = await Session.find({ userId });
+    await dbConnect();
 
+    const { searchParams } = new URL(request.url);
+    const name = searchParams.get('name');
 
-    if (!sessions) {
+    if (!name) {
+      return NextResponse.json({ message: "Name is required" }, { status: 400 });
+    }
+
+    const profile = await User.findOne({ name });
+
+    if (!profile) {
       return NextResponse.json({ message: "User not found" }, { status: 404 });
     }
 
-    return NextResponse.json({ sessions }, { status: 200 });
+    const userId = profile.userId;
+    const sessions = await Session.find({ userId });
+
+    return NextResponse.json({
+      profile: {
+        userId: profile.userId,
+        name: profile.name,
+        email: profile.email,
+        role: profile.role
+      },
+      sessions: sessions.map(session => ({
+        date: session.date,
+        start: session.start,
+        end: session.end,
+        status: session.status
+      }))
+    }, { status: 200 });
   } catch (error) {
+    console.error(error);
     return NextResponse.json({ message: "Internal server error" }, { status: 500 });
   }
 }
