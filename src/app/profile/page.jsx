@@ -27,17 +27,8 @@ const HomePage = async () => {
                         Welcome, {session?.user?.name}
                     </h1>
                     <br/>
-                    <h2>Your Previous Sessions:</h2>
-                    {data?.sessions && <ul>
-                        {data?.sessions.map(session => (
-                            <li key={session.id} className="border border-black p-2">
-                                {new Date(session.date).toLocaleString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })} - {new Date(session.start).toLocaleString('en-US', { hour: 'numeric', minute: 'numeric', second: 'numeric' })} to {new Date(session.end).toLocaleString('en-US', { hour: 'numeric', minute: 'numeric', second: 'numeric' })}
-                            <EditSessionButton session={session} />
-                            <DeleteSessionButton sessionId={session?.sessionId} />
-                            </li>
-                        ))}
-                    </ul>
-                    }
+                    <AddSessionsForm userId={data?.profile?.userId} />
+                    <br/>
                     {data?.profile?.role === 'admin' && (
                     <>
                     <p className="my-3">
@@ -49,8 +40,19 @@ const HomePage = async () => {
                     </p>
                     </>
                     )}
-                    <br/>
-                    <AddSessionsForm userId={data?.profile?.userId} />
+                     <br/>
+                    <h2>Your Previous Sessions:</h2>
+                    {data?.sessions && <ul>
+                        {data?.sessions.map(session => (
+                            <li key={session.id} className="border border-black p-2">
+                                {new Date(session.date).toLocaleString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })} - {new Date(session.start).toLocaleString('en-US', { hour: 'numeric', minute: 'numeric', second: 'numeric' })} to {new Date(session.end).toLocaleString('en-US', { hour: 'numeric', minute: 'numeric', second: 'numeric' })}
+                            <EditSessionButton session={session} />
+                            <DeleteSessionButton sessionId={session?.sessionId} />
+                            </li>
+                        ))}
+                    </ul>
+                    }
+
                 </>
             )}
             <Logout />
