@@ -8,11 +8,21 @@ const AddSessionsForm = ({ userId }) => {
     const [selectedMode, setSelectedMode] = useState("");
     const [selectedSessionType, setSelectedSessionType] = useState("");
     const [selectedOfflineSessionType, setSelectedOfflineSessionType] = useState("");
+    const [selectedDate, setSelectedDate] = useState("");
+    const [startTime, setStartTime] = useState("");
+    const [endTime, setEndTime] = useState("");
+    const [timeSlot, setTimeSlot] = useState("");
+    const [students, setStudents] = useState("");
 
     const handleModeChange = (e) => {
         setSelectedMode(e.target.value);
         setSelectedSessionType("");
         setSelectedOfflineSessionType("");
+        setStudents("");
+        setSelectedDate("");
+        setStartTime("");
+        setEndTime("");
+        setTimeSlot("");
     };
 
     // Calculate the date range
@@ -33,6 +43,44 @@ const AddSessionsForm = ({ userId }) => {
         { label: "7:00 PM - 8:00 PM", start: "19:00", end: "20:00" },
     ];
 
+    // Check if all required fields are filled
+    const isFormValid = () => {
+        // Mode must be selected
+        if (!selectedMode) return false;
+        
+        // Date must be selected
+        if (!selectedDate) return false;
+        
+        // Session type must be selected
+        if (selectedMode === "online") {
+            if (!selectedSessionType) return false;
+            
+            // If online personal or prenatal, student must be selected
+            if ((selectedSessionType === "onlinepersonal" || selectedSessionType === "onlineprenatal") && !students) {
+                return false;
+            }
+            
+            // Time must be selected
+            if (!startTime || !endTime) return false;
+        } else if (selectedMode === "offline") {
+            if (!selectedOfflineSessionType) return false;
+            
+            // If offline personal, student must be selected
+            if (selectedOfflineSessionType === "offlinepersonal" && !students) {
+                return false;
+            }
+            
+            // Time validation based on session type
+            if (selectedOfflineSessionType === "offlinegeneral") {
+                if (!timeSlot) return false;
+            } else {
+                if (!startTime || !endTime) return false;
+            }
+        }
+        
+        return true;
+    };
+
     async function handleSubmit(event) {
         event.preventDefault();
 
@@ -42,11 +90,22 @@ const AddSessionsForm = ({ userId }) => {
             const selectedDate = formData.get('date');
             let startTime, endTime;
 
-            if (selectedMode === 'online') {
+            if (selectedMode === 'online' || (selectedMode === 'offline' && selectedOfflineSessionType !== 'offlinegeneral')) {
                 startTime = formData.get('startTime');
                 endTime = formData.get('endTime');
+                
+                if (!startTime || !endTime) {
+                    alert('Please select both start and end times');
+                    return;
+                }
             } else {
                 const selectedTimeSlot = formData.get('timeSlot');
+                
+                if (!selectedTimeSlot) {
+                    alert('Please select a time slot');
+                    return;
+                }
+                
                 [startTime, endTime] = selectedTimeSlot.split(',');
             }
 
@@ -62,6 +121,9 @@ const AddSessionsForm = ({ userId }) => {
                 body: JSON.stringify({
                     userId,
                     sessionId: 's_' + Date.now(),
+                    mode: selectedMode,
+                    sessionType: selectedMode === 'online' ? selectedSessionType : selectedOfflineSessionType,
+                    students: formData.get('students'),
                     date: new Date(selectedDate).toISOString(),
                     start: startDateTime.toISOString(),
                     end: endDateTime.toISOString(),
@@ -77,6 +139,7 @@ const AddSessionsForm = ({ userId }) => {
 
         } catch (e) {
             console.error('Error submitting form:', e.message);
+            alert('Error submitting session. Please try again.');
         }
     }
 
@@ -118,22 +181,25 @@ const AddSessionsForm = ({ userId }) => {
                 
                 {selectedMode === "offline" && (
                     <div className="my-2 w-full">
-                        <label htmlFor="offlineSessions">Sessions</label>
+                        <label htmlFor="offlineSessions">Classes</label>
                         <select
                             className="border mx-2 border-gray-500 rounded p-2 w-full bg-white"
                             name="sessionType"
                             id="offlineSessions"
                             value={selectedOfflineSessionType}
-                            onChange={(e) => setSelectedOfflineSessionType(e.target.value)}
+                            onChange={(e) => {
+                                setSelectedOfflineSessionType(e.target.value);
+                                setStudents("");
+                            }}
                         >
-                            <option value="">Please select a session</option>
-                            <option value="offlinegeneral">General Session</option>
-                            <option value="offlinepersonal">Personal Session</option>
-                            <option value="offlineprenatal">Semi-Prenatal Session</option>
-                            <option value="offlinesemiprivate">Semi-Private Session</option>
-                            <option value="offlinekids">Kids Session</option>
-                            <option value="offlineteens">Teens Session</option>
-                            <option value="offlineteens">Seniors Citizen Session</option>
+                            <option value="">Please select a class</option>
+                            <option value="offlinegeneral">General</option>
+                            <option value="offlinepersonal">Personal</option>
+                            <option value="offlineprenatal">Semi-Prenatal</option>
+                            <option value="offlinesemiprivate">Semi-Private</option>
+                            <option value="offlinekids">Kids</option>
+                            <option value="offlineteens">Teens</option>
+                            <option value="offlineseniors">Seniors Citizen</option>
                         </select>
                     </div>
                 )}
@@ -144,30 +210,35 @@ const AddSessionsForm = ({ userId }) => {
                             className="border mx-2 border-gray-500 rounded p-2 w-full bg-white"
                             name="students"
                             id="personalStudents"
+                            value={students}
+                            onChange={(e) => setStudents(e.target.value)}
                         >
-                            <option value="">Please select a personal session student</option>
-                            <option value="personalstudent1">Personal session student1</option>
-                            <option value="personalstudent2">Personal session student2</option>
-                            <option value="personalstudent3">Personal session student3</option>
-                            <option value="personalstudent4">Personal session student4</option>
-                            <option value="personalstudent5">Personal session student5</option>
+                            <option value="">Please select</option>
+                            <option value="Raj">Raj</option>
+                            <option value="Ravi">Ravi</option>
+                            <option value="Simran">Simran</option>
+                            <option value="Aisha">Aisha</option>
+                            <option value="Rahul">Rahul</option>
                         </select>
                     </div>
                 )}
 
                 {selectedMode === "online" && (
                     <div className="my-2 w-full">
-                        <label htmlFor="onlineSessions">Sessions</label>
+                        <label htmlFor="onlineSessions">Classes</label>
                         <select
                             className="border mx-2 border-gray-500 rounded p-2 w-full bg-white"
                             name="sessionType"
                             id="onlineSessions"
                             value={selectedSessionType}
-                            onChange={(e) => setSelectedSessionType(e.target.value)}
+                            onChange={(e) => {
+                                setSelectedSessionType(e.target.value);
+                                setStudents("");
+                            }}
                         >
-                            <option value="">Please select a session</option>
-                            <option value="onlinepersonal">Personal Session</option>
-                            <option value="onlineprenatal">Prenatal Session</option>
+                            <option value="">Please select a class</option>
+                            <option value="onlinepersonal">Personal</option>
+                            <option value="onlineprenatal">Prenatal</option>
                         </select>
                     </div>
                 )}
@@ -178,13 +249,15 @@ const AddSessionsForm = ({ userId }) => {
                             className="border mx-2 border-gray-500 rounded p-2 w-full bg-white"
                             name="students"
                             id="personalStudents"
+                            value={students}
+                            onChange={(e) => setStudents(e.target.value)}
                         >
-                            <option value="">Please select a personal session student</option>
-                            <option value="personalstudent1">Personal session student1</option>
-                            <option value="personalstudent2">Personal session student2</option>
-                            <option value="personalstudent3">Personal session student3</option>
-                            <option value="personalstudent4">Personal session student4</option>
-                            <option value="personalstudent5">Personal session student5</option>
+                            <option value="">Please select</option>
+                            <option value="Kiran">Kiran</option>
+                            <option value="Kusha">Kusha</option>
+                            <option value="Romio">Romio</option>
+                            <option value="Riya">Riya</option>
+                            <option value="Gops">Gops</option>
                         </select>
                     </div>
                 )}
@@ -196,13 +269,15 @@ const AddSessionsForm = ({ userId }) => {
                             className="border mx-2 border-gray-500 rounded p-2 w-full bg-white"
                             name="students"
                             id="prenatalStudents"
+                            value={students}
+                            onChange={(e) => setStudents(e.target.value)}
                         >
-                            <option value="">Please select a prenatal session student</option>
-                            <option value="prenatalstudent1">Prenatal session student1</option>
-                            <option value="prenatalstudent2">Prenatal session student2</option>
-                            <option value="prenatalstudent3">Prenatal session student3</option>
-                            <option value="prenatalstudent4">Prenatal session student4</option>
-                            <option value="prenatalstudent5">Prenatal session student5</option>
+                            <option value="">Please select</option>
+                            <option value="Ammu">Ammu</option>
+                            <option value="Bina">Bina</option>
+                            <option value="Chhaya">Chhaya</option>
+                            <option value="Dipa">Dipa</option>
+                            <option value="Esha">Esha</option>
                         </select>
                     </div>
                 )}
@@ -219,12 +294,14 @@ const AddSessionsForm = ({ userId }) => {
                         id="date"
                         min={minDate}
                         max={maxDate}
+                        value={selectedDate}
+                        onChange={(e) => setSelectedDate(e.target.value)}
                         required
                     />
                 </div>
             )}
 
-                {selectedMode === "online" || selectedMode === "offline" && selectedOfflineSessionType !== "offlinegeneral" ? (
+                {(selectedMode === "online" || (selectedMode === "offline" && selectedOfflineSessionType !== "offlinegeneral")) ? (
                     <div className="my-2 w-full">
                         <div className="grid grid-cols-2 gap-4">
                             <div>
@@ -235,6 +312,8 @@ const AddSessionsForm = ({ userId }) => {
                                     type="time"
                                     id="startTime"
                                     name="startTime"
+                                    value={startTime}
+                                    onChange={(e) => setStartTime(e.target.value)}
                                     className="border mx-2 border-gray-500 rounded p-2 w-full bg-white"
                                     required
                                 />
@@ -247,13 +326,15 @@ const AddSessionsForm = ({ userId }) => {
                                     type="time"
                                     id="endTime"
                                     name="endTime"
+                                    value={endTime}
+                                    onChange={(e) => setEndTime(e.target.value)}
                                     className="border mx-2 border-gray-500 rounded p-2 w-full bg-white"
                                     required
                                 />
                             </div>
                         </div>
                     </div>
-                ) : ( selectedMode === "online" || selectedMode === "offline" &&
+                ) : (selectedMode === "offline" && selectedOfflineSessionType === "offlinegeneral") && (
                     <div className="my-2 w-full">  
                         <label htmlFor="timeSlot" className="block text-sm font-medium text-gray-700 mb-1">
                             Select Time Slot
@@ -262,6 +343,8 @@ const AddSessionsForm = ({ userId }) => {
                             className="border mx-2 border-gray-500 rounded p-2 w-full bg-white"
                             name="timeSlot"
                             id="timeSlot"
+                            value={timeSlot}
+                            onChange={(e) => setTimeSlot(e.target.value)}
                             required
                         >
                             <option value="">Select a time slot</option>
@@ -280,7 +363,12 @@ const AddSessionsForm = ({ userId }) => {
 
                 <button
                     type="submit"
-                    className="bg-orange-300 mt-4 rounded flex justify-center items-center w-36 p-2 hover:bg-orange-400 transition-colors"
+                    disabled={!isFormValid()}
+                    className={`mt-4 rounded flex justify-center items-center w-36 p-2 transition-colors ${
+                        isFormValid() 
+                            ? 'bg-orange-300 hover:bg-orange-400 cursor-pointer' 
+                            : 'bg-gray-300 cursor-not-allowed opacity-50'
+                    }`}
                 >
                     Register Session
                 </button>

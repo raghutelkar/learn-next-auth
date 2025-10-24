@@ -4,9 +4,9 @@ import { createSession, deleteSession, updateSession } from "@/queries/sessions"
 import { dbConnect } from "@/lib/mongo";
 
 export const POST = async (request) => {
-  const {userId, sessionId, date, start, end} = await request.json();
+  const {userId, sessionId, mode, sessionType, students, date, start, end} = await request.json();
 
-  console.log(userId, sessionId, date, start, end);
+  console.log(userId, sessionId, mode, sessionType, students, date, start, end);
 
   // Create a DB Conenction
   await dbConnect();
@@ -14,6 +14,9 @@ export const POST = async (request) => {
   const newSession = {
     userId,
     sessionId,
+    mode,
+    sessionType,
+    students: students || 'N/A',
     date,
     start,
     end

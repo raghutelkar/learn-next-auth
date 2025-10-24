@@ -9,6 +9,19 @@ const sessionSchema = new Schema({
     type: String,
     required: true,
   },
+  mode: {
+    type: String,
+    required: true,
+    enum: ['online', 'offline']
+  },
+  sessionType: {
+    type: String,
+    required: true
+  },
+  students: {
+    type: String,
+    required: false
+  },
   date: {
     type: String,
     required: true,
