@@ -1,9 +1,8 @@
 "use client";
 
-import { doCredentialLogin } from "@/app/actions";
-
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { signIn } from "next-auth/react";
 
 
 const LoginForm = () => {
@@ -14,13 +13,21 @@ const LoginForm = () => {
         event.preventDefault();
         try {
             const formData = new FormData(event.currentTarget);
+            const email = formData.get("email");
+            const password = formData.get("password");
 
-            const response = await doCredentialLogin(formData);
+            // Use client-side signIn so the browser receives the Set-Cookie headers
+            const response = await signIn("credentials", {
+                redirect: false,
+                email,
+                password,
+            });
 
-            if (!!response.error) {
+            if (response?.error) {
                 console.error(response.error);
-                setError(response.error.message);
+                setError(response.error);
             } else {
+                // Navigate to profile after successful sign in
                 router.push("/profile");
             }
         } catch (e) {
