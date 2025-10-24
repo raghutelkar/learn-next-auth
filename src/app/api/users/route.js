@@ -35,7 +35,9 @@ export async function GET(request) {
         date: session.date,
         start: session.start,
         end: session.end,
-        status: session.status
+        mode: session.mode,
+        sessionType: session.sessionType,
+        students: session.students
       }))
     }, { status: 200 });
   } catch (error) {

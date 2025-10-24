@@ -360,7 +360,7 @@ const AddSessionsForm = ({ userId }) => {
                     </div>
                 )}
                 
-
+            { (selectedMode === "online" || selectedMode === "offline") && (   
                 <button
                     type="submit"
                     disabled={!isFormValid()}
@@ -372,6 +372,7 @@ const AddSessionsForm = ({ userId }) => {
                 >
                     Register Session
                 </button>
+            )}
             </form>
         </>
     );

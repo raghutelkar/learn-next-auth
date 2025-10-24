@@ -46,6 +46,10 @@ const HomePage = async () => {
                         {data?.sessions.map(session => (
                             <li key={session.id} className="border border-black p-2">
                                 {new Date(session.date).toLocaleString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })} - {new Date(session.start).toLocaleString('en-US', { hour: 'numeric', minute: 'numeric', second: 'numeric' })} to {new Date(session.end).toLocaleString('en-US', { hour: 'numeric', minute: 'numeric', second: 'numeric' })}
+                                <br/>
+                                <br/>
+                                Mode: {session.mode} | Type: {session.sessionType} {session.students !== 'N/A' && <>| Students: {session.students}</>}
+                                <br/>
                             <EditSessionButton session={session} />
                             <DeleteSessionButton sessionId={session?.sessionId} />
                             </li>
