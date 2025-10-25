@@ -1,19 +1,9 @@
 "use client"
 
-import { useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { useSession } from 'next-auth/react';
-import { redirect } from 'next/navigation';
 
 const RegistrationForm = () => {
-    const { data: session } = useSession();
     const router = useRouter();
-
-    useEffect(() => {
-        if (!session || session?.user?.role !== 'admin') {
-            redirect('/');
-        }
-    }, [session]);
 
     async function handleSubmit(event) {
       event.preventDefault();
@@ -23,7 +13,7 @@ const RegistrationForm = () => {
 
         const userId = 'YogaUser_' + Date.now();
         const name = formData.get('name');
-        const role = formData.get('role');
+        const role = 'user';
         const email = formData.get('email');
         const password = formData.get('password');
 
@@ -62,18 +52,6 @@ const RegistrationForm = () => {
                         name="name"
                         id="name"
                     />
-                </div>
-                <div className="my-2">
-                    <label htmlFor="role">Role</label>
-                    <select
-                        className="border mx-2 border-gray-500 rounded"
-                        name="role"
-                        id="role"
-                        defaultValue="user"
-                    >
-                        <option value="user">User</option>
-                        <option value="admin">Admin</option>
-                    </select>
                 </div>
                 <div className="my-2">  
                     <label htmlFor="email">Email Address</label>
