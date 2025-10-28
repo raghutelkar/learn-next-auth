@@ -1,10 +1,52 @@
+'use client'
+
+import { useState } from 'react'
+import { motion } from 'motion/react'
 import DeleteSessionButton from '@/components/DeleteSessionButton'
 import EditSessionButton from '@/components/EditSessionButton'
 
 const RecentSessions = ({currentMonthName, totalSessionsInCurrentMonth, lastFiveSessions}) => {
+  const [deleteMessage, setDeleteMessage] = useState(null)
+  const [isSuccess, setIsSuccess] = useState(false)
+
+  const handleDeleteCallback = (success, message) => {
+    setIsSuccess(success)
+    setDeleteMessage(message)
+    
+    // Hide message after 3 seconds
+    setTimeout(() => {
+      setDeleteMessage(null)
+    }, 2000)
+  }
+
   return (
         <div className='container mx-auto flex justify-center'>
             <div className='flex flex-col w-full max-h-[calc(100vh-350px)]'>
+              {isSuccess && deleteMessage && (
+                <motion.div
+            className='flex w-full items-start bg-green-100 text-green-600 p-3 mb-8 rounded-lg relative lg:flex'
+            role='alert'
+              animate={{ opacity: [1, 0, 1] }}
+              transition={{
+                duration: 1,
+                repeat: Infinity,
+                repeatType: 'loop',
+              }}
+          >
+            <div className="bg-green-500 text-white font-semibold tracking-wide flex items-center w-full p-4 rounded-md shadow-md shadow-green-100" role="alert">
+              <div className="shrink-0 mr-3">
+                <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5 fill-white inline" viewBox="0 0 512 512">
+                  <ellipse cx="256" cy="256" fill="#fff" data-original="#fff" rx="256" ry="255.832" />
+                  <path className="fill-green-600"
+                    d="m235.472 392.08-121.04-94.296 34.416-44.168 74.328 57.904 122.672-177.016 46.032 31.888z"
+                    data-original="#ffffff" />
+                </svg>
+              </div>
+              <span className="text-[15px] mr-3">{deleteMessage}</span>
+            </div>
+          </motion.div>
+              )}
+              
               <div className='text-lg flex flex-row-reverse font-bold px-5 py-2 text-gray-500'>
                 Total sessions in {currentMonthName} : {totalSessionsInCurrentMonth}
               </div>
@@ -44,7 +86,10 @@ const RecentSessions = ({currentMonthName, totalSessionsInCurrentMonth, lastFive
                         <EditSessionButton session={session} />
                         </div>
                         <div className='pt-2'>
-                        <DeleteSessionButton sessionId={session?.sessionId} />
+                        <DeleteSessionButton 
+                          sessionId={session?.sessionId} 
+                          onDelete={handleDeleteCallback}
+                        />
                         </div>
                       </td>
                     </tr>

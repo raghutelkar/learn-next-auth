@@ -2,7 +2,7 @@
 
 import { useRouter } from 'next/navigation';
 
-const DeleteSessionButton = ({ sessionId }) => {
+const DeleteSessionButton = ({ sessionId, onDelete }) => {
     const router = useRouter();
 
     const handleDelete = async () => {
@@ -13,12 +13,22 @@ const DeleteSessionButton = ({ sessionId }) => {
             });
             
             if (response.ok) {
+                // Call the onDelete callback if provided
+                if (onDelete) {
+                    onDelete(true, 'Session deleted successfully!');
+                }
                 router.refresh();
             } else {
                 console.error('Failed to delete session');
+                if (onDelete) {
+                    onDelete(false, 'Failed to delete session');
+                }
             }
         } catch (error) {
             console.error('Error deleting session:', error);
+            if (onDelete) {
+                onDelete(false, 'Error deleting session');
+            }
         }
     };
 
