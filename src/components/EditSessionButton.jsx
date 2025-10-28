@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { createPortal } from 'react-dom';
 import EditSessionForm from './EditSessionForm';
 
-const EditSessionButton = ({ session }) => {
+const EditSessionButton = ({ session, onEdit }) => {
     const [isEditing, setIsEditing] = useState(false);
 
     return (
@@ -36,6 +36,7 @@ const EditSessionButton = ({ session }) => {
                 <EditSessionForm 
                     session={session} 
                     onCancel={() => setIsEditing(false)} 
+                    onEdit={onEdit}
                 />
             </div>
         </div>

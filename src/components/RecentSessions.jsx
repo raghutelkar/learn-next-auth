@@ -6,23 +6,23 @@ import DeleteSessionButton from '@/components/DeleteSessionButton'
 import EditSessionButton from '@/components/EditSessionButton'
 
 const RecentSessions = ({currentMonthName, totalSessionsInCurrentMonth, lastFiveSessions}) => {
-  const [deleteMessage, setDeleteMessage] = useState(null)
+  const [message, setMessage] = useState(null)
   const [isSuccess, setIsSuccess] = useState(false)
 
-  const handleDeleteCallback = (success, message) => {
+  const handleCallback = (success, msg) => {
     setIsSuccess(success)
-    setDeleteMessage(message)
+    setMessage(msg)
     
-    // Hide message after 3 seconds
+    // Hide message after 2 seconds
     setTimeout(() => {
-      setDeleteMessage(null)
+      setMessage(null)
     }, 2000)
   }
 
   return (
         <div className='container mx-auto flex justify-center'>
             <div className='flex flex-col w-full max-h-[calc(100vh-350px)]'>
-              {isSuccess && deleteMessage && (
+              {isSuccess && message && (
                 <motion.div
             className='flex w-full items-start bg-green-100 text-green-600 p-3 mb-8 rounded-lg relative lg:flex'
             role='alert'
@@ -42,7 +42,7 @@ const RecentSessions = ({currentMonthName, totalSessionsInCurrentMonth, lastFive
                     data-original="#ffffff" />
                 </svg>
               </div>
-              <span className="text-[15px] mr-3">{deleteMessage}</span>
+              <span className="text-[15px] mr-3">{message}</span>
             </div>
           </motion.div>
               )}
@@ -83,12 +83,15 @@ const RecentSessions = ({currentMonthName, totalSessionsInCurrentMonth, lastFive
                       </td>
                       <td>
                         <div className='pb-2'>
-                        <EditSessionButton session={session} />
+                        <EditSessionButton 
+                          session={session} 
+                          onEdit={handleCallback}
+                        />
                         </div>
                         <div className='pt-2'>
                         <DeleteSessionButton 
                           sessionId={session?.sessionId} 
-                          onDelete={handleDeleteCallback}
+                          onDelete={handleCallback}
                         />
                         </div>
                       </td>

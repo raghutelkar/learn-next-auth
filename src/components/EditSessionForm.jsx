@@ -3,7 +3,7 @@
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
-const EditSessionForm = ({ session, onCancel }) => {
+const EditSessionForm = ({ session, onCancel, onEdit }) => {
     const router = useRouter();
     const [isLoading, setIsLoading] = useState(false);
     const [selectedMode, setSelectedMode] = useState(session.mode || "");
@@ -74,11 +74,22 @@ const EditSessionForm = ({ session, onCancel }) => {
             });
 
             if (response.ok) {
+                // Call the onEdit callback if provided
+                if (onEdit) {
+                    onEdit(true, 'Session updated successfully!');
+                }
                 router.refresh();
                 onCancel(); // Close the edit form
+            } else {
+                if (onEdit) {
+                    onEdit(false, 'Failed to update session');
+                }
             }
         } catch (e) {
             console.error('Error updating session:', e);
+            if (onEdit) {
+                onEdit(false, 'Error updating session');
+            }
         } finally {
             setIsLoading(false);
         }
