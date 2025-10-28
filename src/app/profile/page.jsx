@@ -2,9 +2,8 @@ import Logout from '@/components/Logout'
 import { auth } from '@/auth'
 import Link from 'next/link'
 import AddSessionsForm from '@/components/AddSessionsForm'
-import DeleteSessionButton from '@/components/DeleteSessionButton'
-import EditSessionButton from '@/components/EditSessionButton'
 import fetchUserData from '@/app/api/utils/fetchUserData'
+import ProfileTabs from './profileTabs.jsx'
 import Image from 'next/image'
 
 import { redirect } from 'next/navigation'
@@ -92,101 +91,9 @@ const totalSessionsInCurrentMonth = data?.sessions.filter(session => {
           </div>
         </div>
       </header>
-
-    {session?.user?.name && (
-      <div className='container mx-auto'>
-        <AddSessionsForm userId={data?.profile?.userId} />
-      <div className='container mx-auto py-10 flex justify-center'>
-        <div className='pl-4 pr-4 flex flex-col w-full max-h-[calc(100vh-400px)]'>
-          <div className='text-lg flex flex-row-reverse font-bold px-5 py-2 text-gray-500 shadow border-b border-gray-300'>
-            Total sessions in {currentMonthName} : {totalSessionsInCurrentMonth}
-          </div>
-          <div className='text-xl font-bold px-5 py-2 bg-slate-700 text-white shadow border-b border-gray-300'>
-            Recent sessions
-          </div>
-
-          <div
-            className='w-full overflow-auto shadow bg-white flex-1'
-            id='journal-scroll'
-          >
-            <table className='w-full'>
-              <tbody className=''>
-                {lastFiveSessions && lastFiveSessions.map(session => (
-                <tr key={session.id}
-                  className='relative transform scale-100
-                                          text-sm py-1 border-b-2 border-blue-100 cursor-default'
-                >
-                  <td className='pl-2 whitespace-no-wrap'>
-                    <div className='text-gray-400'>{new Date(session.date).toLocaleString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</div>
-                    <div>{new Date(session.start).toLocaleString('en-US', { hour: 'numeric', minute: 'numeric'})} to  {new Date(session.end).toLocaleString('en-US', { hour: 'numeric', minute: 'numeric' })}</div>
-                  </td>
-
-                  <td className='px-1 py-2 flex flex-col gap-2 whitespace-no-wrap'>
-                    <div className='leading-5 text-gray-900 capitalize'>
-                      <strong>Mode:</strong> {session.mode}
-                    </div>
-                    <div className='leading-5 text-gray-900 capitalize'>
-                      <strong>Type:</strong> {session.sessionType.replace(/(Offline|Online)/gi, '').trim()}
-                    </div>
-                    <div className='leading-5 text-gray-900 capitalize'>
-                      <strong>Student:</strong> {session.students !== 'N/A' ? session.students : 'N/A'}
-                    </div>
-                  </td>
-                  <td>
-                    <div className='pb-2'>
-                    <EditSessionButton session={session} />
-                    </div>
-                    <div className='pt-2'>
-                    <DeleteSessionButton sessionId={session?.sessionId} />
-                    </div>
-                  </td>
-                </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>  
-        </div>
+      <div className='container mx-auto mt-10 p-4'>
+        <ProfileTabs currentMonthName={currentMonthName} lastFiveSessions={lastFiveSessions} totalSessionsInCurrentMonth={totalSessionsInCurrentMonth} data={data} />
       </div>
-      </div>
-    )}
-
-      {/* <div className="flex flex-col items-center m-4">
-            {session?.user?.name && (
-                <>
-                    <AddSessionsForm userId={data?.profile?.userId} />
-                    <br/>
-                    {data?.profile?.role === 'admin' && (
-                    <>
-                    <p className="my-3">
-                        Don't you have an account?
-                        <Link href="/register" className="mx-2 underline">Register</Link>
-                    </p>
-                    <p>
-                        adminPage <Link href='/admin' className="mx-2 underline">Go to Admin Page</Link>
-                    </p>
-                    </>
-                    )}
-                     <br/>
-                    <h2>Your Previous Sessions:</h2>
-                    {data?.sessions && <ul>
-                        {data?.sessions.map(session => (
-                            <li key={session.id} className="border border-black p-2">
-                                {new Date(session.date).toLocaleString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })} - {new Date(session.start).toLocaleString('en-US', { hour: 'numeric', minute: 'numeric', second: 'numeric' })} to {new Date(session.end).toLocaleString('en-US', { hour: 'numeric', minute: 'numeric', second: 'numeric' })}
-                                <br/>
-                                <br/>
-                                Mode: {session.mode} | Type: {session.sessionType} {session.students !== 'N/A' && <>| Students: {session.students}</>}
-                                <br/>
-                            <EditSessionButton session={session} />
-                            <DeleteSessionButton sessionId={session?.sessionId} />
-                            </li>
-                        ))}
-                    </ul>
-                    }
-
-                </>
-            )}
-            <Logout />
-        </div> */}
     </div>
   )
 }
