@@ -19,7 +19,7 @@ const RecentSessions = ({currentMonthName, totalSessionsInCurrentMonth, lastFive
                 <table className='w-full'>
                   <tbody className=''>
                     {lastFiveSessions && lastFiveSessions.map(session => (
-                    <tr key={session.id}
+                    <tr key={session.sessionId}
                       className='relative transform scale-100
                                               text-sm py-1 border-b-2 border-blue-100 cursor-default'
                     >

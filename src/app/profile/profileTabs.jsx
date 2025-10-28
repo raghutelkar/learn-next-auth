@@ -41,16 +41,14 @@ const ProfileTabs = ({currentMonthName, lastFiveSessions, totalSessionsInCurrent
         id="addSessionsContent"
         className={`tab-content mt-6 ${activeTab === 'addSessions' ? 'block' : 'hidden'}`}
       >
-        <div>
             <AddSessionsForm userId={data?.profile?.userId} />
-    </div>
       </div>
 
       <div
         id="recentSessionsContent"
         className={`tab-content mt-8 ${activeTab === 'recentSessions' ? 'block' : 'hidden'}`}
       >
-        <RecentSessions currentMonthName={currentMonthName} totalSessionsInCurrentMonth={totalSessionsInCurrentMonth} lastFiveSessions={lastFiveSessions}/>
+            <RecentSessions currentMonthName={currentMonthName} totalSessionsInCurrentMonth={totalSessionsInCurrentMonth} lastFiveSessions={lastFiveSessions}/>
       </div>
     </div>
   );
