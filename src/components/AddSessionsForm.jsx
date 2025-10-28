@@ -308,7 +308,7 @@ const AddSessionsForm = ({ userId }) => {
                 Classes
               </label>
               <select
-                className='border border-slate-300 rounded p-2 w-full bg-white outline-none text-slate-500'
+                className='border border-gray-500 rounded p-2 w-full bg-white outline-none text-slate-500'
                 name='sessionType'
                 id='offlineSessions'
                 value={selectedOfflineSessionType}
@@ -335,7 +335,7 @@ const AddSessionsForm = ({ userId }) => {
                   Personal Session Students
                 </label>
                 <select
-                  className='border border-slate-300 rounded p-2 w-full bg-white outline-none text-slate-500'
+                  className='border border-gray-500 rounded p-2 w-full bg-white outline-none text-slate-500'
                   name='students'
                   id='personalStudents'
                   value={students}
@@ -360,7 +360,7 @@ const AddSessionsForm = ({ userId }) => {
                 Classes
               </label>
               <select
-                className='border border-slate-300 rounded p-2 w-full bg-white outline-none text-slate-500'
+                className='border border-gray-500 rounded p-2 w-full bg-white outline-none text-slate-500'
                 name='sessionType'
                 id='onlineSessions'
                 value={selectedSessionType}
@@ -384,7 +384,7 @@ const AddSessionsForm = ({ userId }) => {
                 Personal Session Students
               </label>
               <select
-                className='border border-slate-300 rounded p-2 w-full bg-white outline-none text-slate-500'
+                className='border border-gray-500 rounded p-2 w-full bg-white outline-none text-slate-500'
                 name='students'
                 id='personalStudents'
                 value={students}
@@ -409,7 +409,7 @@ const AddSessionsForm = ({ userId }) => {
                 Prenatal Session Students
               </label>
               <select
-                className='border border-slate-300 rounded p-2 w-full bg-white outline-none text-slate-500'
+                className='border border-gray-500 rounded p-2 w-full bg-white outline-none text-slate-500'
                 name='students'
                 id='prenatalStudents'
                 value={students}
@@ -434,7 +434,7 @@ const AddSessionsForm = ({ userId }) => {
                 Select Date
               </label>
               <input
-                className='border border-slate-300 rounded py-1 w-full outline-none text-slate-500 bg-white'
+                className='border border-gray-500 rounded py-1 w-full outline-none text-slate-500 bg-white'
                 type='date'
                 name='date'
                 id='date'
@@ -465,7 +465,7 @@ const AddSessionsForm = ({ userId }) => {
                     name='startTime'
                     value={startTime}
                     onChange={(e) => setStartTime(e.target.value)}
-                    className='border border-slate-300 rounded py-1 w-full bg-white outline-none text-slate-500'
+                    className='border border-gray-500 rounded py-1 w-full bg-white outline-none text-slate-500'
                     required
                   />
                 </div>
@@ -482,7 +482,7 @@ const AddSessionsForm = ({ userId }) => {
                     name='endTime'
                     value={endTime}
                     onChange={(e) => setEndTime(e.target.value)}
-                    className='border border-slate-300 rounded py-1 w-full bg-white outline-none text-slate-500'
+                    className='border border-gray-500 rounded py-1 w-full bg-white outline-none text-slate-500'
                     required
                   />
                 </div>
@@ -499,7 +499,7 @@ const AddSessionsForm = ({ userId }) => {
                   Select Time Slot
                 </label>
                 <select
-                  className='border border-slate-300 rounded p-2 w-full bg-white outline-none text-slate-500'
+                  className='border border-gray-500 rounded p-2 w-full bg-white outline-none text-slate-500'
                   name='timeSlot'
                   id='timeSlot'
                   value={timeSlot}

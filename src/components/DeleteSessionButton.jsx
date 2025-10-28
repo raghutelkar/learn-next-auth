@@ -2,11 +2,16 @@
 
 import { useRouter } from 'next/navigation';
 
-const DeleteSessionButton = ({ sessionId, onDelete }) => {
+const DeleteSessionButton = ({ sessionId, onDelete, onLoadingChange }) => {
     const router = useRouter();
 
     const handleDelete = async () => {
         try {
+            // Notify parent that deletion is starting
+            if (onLoadingChange) {
+                onLoadingChange(true);
+            }
+            
             const response = await fetch(`/api/addSession?sessionId=${sessionId}`, {
                 method: 'DELETE',
                 cache: 'no-cache',
@@ -28,6 +33,11 @@ const DeleteSessionButton = ({ sessionId, onDelete }) => {
             console.error('Error deleting session:', error);
             if (onDelete) {
                 onDelete(false, 'Error deleting session');
+            }
+        } finally {
+            // Notify parent that deletion is complete
+            if (onLoadingChange) {
+                onLoadingChange(false);
             }
         }
     };

@@ -8,6 +8,7 @@ import EditSessionButton from '@/components/EditSessionButton'
 const RecentSessions = ({currentMonthName, totalSessionsInCurrentMonth, lastFiveSessions}) => {
   const [message, setMessage] = useState(null)
   const [isSuccess, setIsSuccess] = useState(false)
+  const [isDeleting, setIsDeleting] = useState(false)
 
   const handleCallback = (success, msg) => {
     setIsSuccess(success)
@@ -19,7 +20,22 @@ const RecentSessions = ({currentMonthName, totalSessionsInCurrentMonth, lastFive
     }, 2000)
   }
 
+  const handleLoadingChange = (loading) => {
+    setIsDeleting(loading)
+  }
+
   return (
+        <div className='relative'>
+          {/* Spinner Overlay */}
+          {isDeleting && (
+            <div className='fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50'>
+              <div className='bg-white rounded-lg p-6 flex flex-col items-center gap-4'>
+                <div className='animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600'></div>
+                <p className='text-gray-700 font-medium'>Deleting session...</p>
+              </div>
+            </div>
+          )}
+          
         <div className='container mx-auto flex justify-center'>
             <div className='flex flex-col w-full max-h-[calc(100vh-350px)]'>
               {isSuccess && message && (
@@ -92,6 +108,7 @@ const RecentSessions = ({currentMonthName, totalSessionsInCurrentMonth, lastFive
                         <DeleteSessionButton 
                           sessionId={session?.sessionId} 
                           onDelete={handleCallback}
+                          onLoadingChange={handleLoadingChange}
                         />
                         </div>
                       </td>
@@ -102,6 +119,7 @@ const RecentSessions = ({currentMonthName, totalSessionsInCurrentMonth, lastFive
               </div>  
             </div>
           </div>
+        </div>
   )
 }
 
