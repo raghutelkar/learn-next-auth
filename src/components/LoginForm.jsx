@@ -16,7 +16,8 @@ const ERROR_MESSAGES = {
   GENERIC: 'An error occurred. Please try again.',
 }
 
-const INPUT_STYLES = 'bg-slate-100 w-full text-sm text-slate-900 px-4 py-3 rounded-md outline-0 border border-gray-200 focus:border-blue-600 focus:bg-transparent transition-colors'
+const INPUT_STYLES =
+  'bg-slate-100 w-full text-sm text-slate-900 px-4 py-3 rounded-md outline-0 border border-gray-200 focus:border-blue-600 focus:bg-transparent transition-colors'
 const LABEL_STYLES = 'text-sm text-slate-900 font-medium mb-2 block'
 
 const LoginForm = () => {
@@ -61,28 +62,53 @@ const LoginForm = () => {
   )
 
   return (
-    <div className='lg:min-h-screen flex flex-col items-center justify-center p-10'>
+    <div className='lg:min-h-screen flex flex-col items-center justify-center p-6 border-yellow-400 border-t-8'>
       <div className='grid lg:grid-cols-2 items-center gap-10 max-w-6xl max-lg:max-w-lg w-full'>
         {/* Left Column - Branding */}
         <LeftBranding routes={ROUTES.REGISTER} from='login' />
-
+        
         {/* Right Column - Login Form */}
         <form
-          autoComplete="off"
-          className='max-w-md lg:ml-auto w-full' 
+          autoComplete='off'
+          className='max-w-md lg:ml-auto w-full'
           onSubmit={onSubmit}
           noValidate
         >
-          <motion.h2 className='text-green-700 text-2xl font-semibold mb-8' 
-          animate={{ opacity: [1, 0, 1] }} 
-          transition={{
-            duration: 1,
-            repeat: Infinity,
-            repeatType: "loop"
-          }}
+          <motion.h2
+            className='text-green-700 text-2xl font-semibold mb-8'
           >
             Hey, time to Log In
           </motion.h2>
+
+          {error && (
+            <motion.div
+              className='flex items-start bg-red-100 text-red-800 p-3 mb-4 rounded-lg relative lg:flex'
+              role='alert'
+              animate={{ opacity: [1, 0, 1] }}
+              transition={{
+                duration: 1,
+                repeat: Infinity,
+                repeatType: 'loop',
+              }}
+            >
+              <div className='flex items-center gap-3'>
+                <svg
+                  xmlns='http://www.w3.org/2000/svg'
+                  className='w-5 h-5 shrink-0 fill-red-500 inline'
+                  viewBox='0 0 32 32'
+                >
+                  <path
+                    d='M16 1a15 15 0 1 0 15 15A15 15 0 0 0 16 1zm6.36 20L21 22.36l-5-4.95-4.95 4.95L9.64 21l4.95-5-4.95-4.95 1.41-1.41L16 14.59l5-4.95 1.41 1.41-5 4.95z'
+                    data-original='#ea2d3f'
+                  />
+                </svg>
+                <span className='font-semibold text-[14px] inline-block mr-2'>
+                  Error!
+                </span>
+                <span className='block text-sm font-medium sm:inline'>{error}</span>
+              </div>
+            </motion.div>
+          )}
 
           <div className='space-y-6'>
             {/* Email Field */}
@@ -95,7 +121,7 @@ const LoginForm = () => {
                 type='email'
                 id='email'
                 required
-                autoComplete="off"
+                autoComplete='off'
                 disabled={isLoading}
                 className={INPUT_STYLES}
                 placeholder='Enter Email'
@@ -113,7 +139,7 @@ const LoginForm = () => {
                 type='password'
                 id='password'
                 required
-                autoComplete="off"
+                autoComplete='off'
                 disabled={isLoading}
                 className={INPUT_STYLES}
                 placeholder='Enter Password'
@@ -133,17 +159,6 @@ const LoginForm = () => {
               {isLoading ? 'Logging in...' : 'Log in'}
             </button>
           </div>
-
-          {/* Error Message */}
-          {error && (
-            <div 
-              className='text-center text-red-500 pt-6 text-sm font-medium'
-              role='alert'
-              aria-live='polite'
-            >
-              {error}
-            </div>
-          )}
         </form>
       </div>
     </div>

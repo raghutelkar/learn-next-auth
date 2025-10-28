@@ -12,6 +12,12 @@ const outfit = Outfit({
 export const metadata = {
   title: "SampurnahSync App",
   description: "Track yoga sessions, monitor teacher contributions, and streamline studio management — all in one place.",
+  viewport: {
+    width: "device-width",
+    initialScale: 1,
+    maximumScale: 1,
+    userScalable: false,
+  },
 };
 
 export default async function RootLayout({ children }) {

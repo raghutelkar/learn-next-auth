@@ -1,6 +1,6 @@
     const fetchUserData = async (name) => {
         try {
-            const response = await fetch(`http://localhost:3000/api/users?name=${name}`, {
+            const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/users?name=${name}`, {
                 cache: 'no-cache',
                 next: { revalidate: 0, tags: ['sessions'] }
             });

@@ -4,14 +4,14 @@ import Link from 'next/link'
 
 const LeftBranding = ({ routes, from }) => {
   return (
-    <div>
+    <div className='flex flex-col items-center justify-center text-center lg:items-start'>
       <Image
         src='/logo.png'
         alt='Sampurnah Yogashraya'
         width={500}
         height={500}
         priority={true}
-        className='w-[250px] lg:w-[300px] h-auto mb-10'
+        className='w-[150px] lg:w-[200px] h-auto mb-6'
       />
 
       <motion.h1
@@ -22,11 +22,11 @@ const LeftBranding = ({ routes, from }) => {
       >
         SampurnahSync
       </motion.h1>
+      
 
-      <p className='text-[15px] mt-6 text-slate-600 leading-relaxed'>
-        Track yoga sessions, monitor teacher contributions, and streamline
-        studio management — all in one place.
-      </p>
+      <em className='text-[15px] text-gray-400 leading-relaxed flex lg:text-left'>
+        Track your yoga sessions app.
+      </em>
 
       <p className='text-[15px] mt-6 lg:mt-12 text-slate-600'>
         Don&apos;t have an account?{' '}
