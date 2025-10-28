@@ -1,7 +1,6 @@
 import Logout from '@/components/Logout'
 import { auth } from '@/auth'
 import Link from 'next/link'
-import AddSessionsForm from '@/components/AddSessionsForm'
 import fetchUserData from '@/app/api/utils/fetchUserData'
 import ProfileTabs from './profileTabs.jsx'
 import Image from 'next/image'
