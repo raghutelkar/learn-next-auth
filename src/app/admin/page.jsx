@@ -3,6 +3,9 @@ import { useState, useEffect } from 'react';
 import { useSession } from 'next-auth/react';
 import { redirect } from 'next/navigation';
 import fetchUserData from "@/app/api/utils/fetchUserData";
+import RecentSessions from '@/components/RecentSessions';
+import TotalSummary from '@/components/TotalSummary';
+import Header from '@/components/Header';
 
 const AdminPage = () => {
     const { data: session } = useSession();
@@ -10,6 +13,7 @@ const AdminPage = () => {
     const [userData, setUserData] = useState(null);
     const [loading, setLoading] = useState(false);
     const [selectedMonth, setSelectedMonth] = useState('');
+    const [activeTab, setActiveTab] = useState('recentSessions');
 
     useEffect(() => {
         if (!session || session?.user?.role !== 'admin') {
@@ -73,9 +77,18 @@ const AdminPage = () => {
         return filterSessionsByMonth(userData.sessions);
     };
 
+    const getCurrentMonthName = () => {
+        if (!selectedMonth) return 'All Time';
+        return months.find(m => m.value === selectedMonth)?.label || 'Unknown';
+    };
+
+    const sortedSessions = getFilteredSessions().sort((a, b) => new Date(b.date) - new Date(a.date));
+
     return (
-        <div className="p-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+        <>
+            <Header userRole={session?.user?.role} />
+            <div className="p-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
                 <div>
                     <label htmlFor="userSelect" className="block text-sm font-medium text-gray-700 mb-2">
                         Select User
@@ -122,49 +135,60 @@ const AdminPage = () => {
                 <div className="space-y-6">
                     <div className="bg-white p-6 rounded-lg shadow">
                         <h2 className="text-xl font-bold mb-4">User Profile</h2>
-                        <p>Name: {userData.profile?.name}</p>
-                        <p>Email: {userData.profile?.email}</p>
+                        <p><strong>Name:</strong> {userData.profile?.name}</p>
+                        <p><strong>Email:</strong> {userData.profile?.email}</p>
+                        <p className="mt-2"><strong>Total Sessions:</strong> {calculateStats(userData.sessions).totalSessions}</p>
                     </div>
 
-                    <div className="bg-white p-6 rounded-lg shadow">
-                        <h2 className="text-xl font-bold mb-4">Statistics</h2>
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <div className="bg-indigo-50 p-4 rounded">
-                                <p className="text-sm text-indigo-600">
-                                    {selectedMonth ? `Sessions in ${months.find(m => m.value === selectedMonth)?.label}` : 'Total Sessions'}
-                                </p>
-                                <p className="text-2xl font-bold">
-                                    {calculateStats(userData.sessions).totalSessions}
-                                </p>
-                            </div>
+                    {/* Tabs */}
+                    <div>
+                        <ul className="flex bg-gray-100 items-center rounded-md overflow-hidden">
+                            <li
+                                onClick={() => setActiveTab('recentSessions')}
+                                className={`tab font-semibold tracking-wide h-[60px] items-center w-full text-center text-base py-1.5 px-6 cursor-pointer ${
+                                    activeTab === 'recentSessions'
+                                        ? 'text-white bg-gradient-to-l from-yellow-300 via-green-400 to-yellow-300'
+                                        : 'text-slate-600 font-medium'
+                                }`}
+                            >
+                                Recent<br/>Sessions
+                            </li>
+                            <li
+                                onClick={() => setActiveTab('summary')}
+                                className={`tab font-semibold tracking-wide h-[60px] border-l border-yellow-400 items-center w-full text-center text-base py-1.5 px-6 cursor-pointer ${
+                                    activeTab === 'summary'
+                                        ? 'text-white bg-gradient-to-l from-green-400 via-white-400 to-yellow-300'
+                                        : 'text-slate-600 font-medium'
+                                }`}
+                            >
+                                Sessions<br/>Summary
+                            </li>
+                        </ul>
+
+                        <div
+                            className={`tab-content mt-8 ${activeTab === 'recentSessions' ? 'block' : 'hidden'}`}
+                        >
+                            <RecentSessions 
+                                currentMonthName={getCurrentMonthName()} 
+                                totalSessionsInCurrentMonth={sortedSessions.length} 
+                                sortedSessions={sortedSessions}
+                            />
                         </div>
-                    </div>
-
-                    <div className="bg-white p-6 rounded-lg shadow">
-                        <h2 className="text-xl font-bold mb-4">
-                            Session History 
-                            {selectedMonth && (
-                                <span className="text-sm font-normal ml-2 text-gray-600">
-                                    ({months.find(m => m.value === selectedMonth)?.label})
-                                </span>
-                            )}
-                        </h2>
-                        <div className="space-y-4 max-h-[400px] overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100">
-                            {getFilteredSessions().length > 0 ? (
-                                getFilteredSessions().map((session, index) => (
-                                    <div key={index} className="border-b pb-4">
-                                        <p>Date: {new Date(session.date).toLocaleString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</p>
-                                        <p>Time: {new Date(session.start).toLocaleString('en-US', { hour: 'numeric', minute: 'numeric', second: 'numeric' })} to {new Date(session.end).toLocaleString('en-US', { hour: 'numeric', minute: 'numeric', second: 'numeric' })}</p>
-                                    </div>
-                                ))
-                            ) : (
-                                <p>No sessions found for the selected period</p>
-                            )}
+                        
+                        <div
+                            className={`tab-content mt-8 ${activeTab === 'summary' ? 'block' : 'hidden'}`}
+                        >
+                            <TotalSummary 
+                                currentMonthName={getCurrentMonthName()} 
+                                totalSessionsInCurrentMonth={sortedSessions.length} 
+                                sortedSessions={sortedSessions}
+                            />
                         </div>
                     </div>
                 </div>
             )}
         </div>
+        </>
     );
 };
 
