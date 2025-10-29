@@ -5,10 +5,55 @@ import { motion } from 'motion/react'
 import DeleteSessionButton from '@/components/DeleteSessionButton'
 import EditSessionButton from '@/components/EditSessionButton'
 
-const RecentSessions = ({currentMonthName, totalSessionsInCurrentMonth, lastFiveSessions}) => {
+const RecentSessions = ({sortedSessions}) => {
   const [message, setMessage] = useState(null)
   const [isSuccess, setIsSuccess] = useState(false)
   const [isDeleting, setIsDeleting] = useState(false)
+  const [timeFilter, setTimeFilter] = useState('all')
+  const [modeFilter, setModeFilter] = useState('all')
+  const [typeFilter, setTypeFilter] = useState('all')
+
+  // Get unique time slots from sessions data
+  const uniqueTimeSlots = [...new Set(
+    sortedSessions?.map(session => {
+      const start = new Date(session.start);
+      const end = new Date(session.end);
+      const startTime = start.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true });
+      const endTime = end.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true });
+      return `${startTime} - ${endTime}`;
+    }) || []
+  )].sort((a, b) => {
+    // Sort by start time
+    const getTimeValue = (timeStr) => {
+      const match = timeStr.match(/(\d+):(\d+)\s*(AM|PM)/);
+      if (!match) return 0;
+      let hours = parseInt(match[1]);
+      const minutes = parseInt(match[2]);
+      const isPM = match[3] === 'PM';
+      if (isPM && hours !== 12) hours += 12;
+      if (!isPM && hours === 12) hours = 0;
+      return hours * 60 + minutes;
+    };
+    return getTimeValue(a) - getTimeValue(b);
+  });
+
+  // Filter sessions based on selected filters
+  const filteredSessions = sortedSessions?.filter(session => {
+    const start = new Date(session.start);
+    const end = new Date(session.end);
+    const sessionTimeSlot = `${start.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true })} - ${end.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true })}`;
+    
+    // Time filter - exact match with time slot
+    const timeMatch = timeFilter === 'all' || sessionTimeSlot === timeFilter;
+    
+    // Mode filter
+    const modeMatch = modeFilter === 'all' || session.mode === modeFilter;
+    
+    // Type filter
+    const typeMatch = typeFilter === 'all' || session.sessionType === typeFilter;
+    
+    return timeMatch && modeMatch && typeMatch;
+  }) || []
 
   const handleCallback = (success, msg) => {
     setIsSuccess(success)
@@ -37,7 +82,7 @@ const RecentSessions = ({currentMonthName, totalSessionsInCurrentMonth, lastFive
           )}
           
         <div className='container mx-auto flex justify-center'>
-            <div className='flex flex-col w-full max-h-[calc(100vh-350px)]'>
+            <div className='flex flex-col w-full'>
               {isSuccess && message && (
                 <motion.div
             className='flex w-full items-start bg-green-100 text-green-600 p-3 mb-8 rounded-lg relative lg:flex'
@@ -63,11 +108,73 @@ const RecentSessions = ({currentMonthName, totalSessionsInCurrentMonth, lastFive
           </motion.div>
               )}
               
-              <div className='text-lg flex flex-row-reverse font-bold px-5 py-2 text-gray-500'>
-                Total sessions in {currentMonthName} : {totalSessionsInCurrentMonth}
+              <div className='text-xl font-bold px-6 py-4 bg-gradient-to-r from-slate-600 to-slate-800 rounded-t-lg text-white shadow border-b border-gray-300'>
+                Recent sessions
               </div>
-              <div className='text-xl font-bold px-5 py-2 bg-slate-700 text-white shadow border-b border-gray-300'>
-                Your recent sessions
+
+              {/* Filters */}
+              <div className='bg-gray-50 px-5 py-3 border-b border-gray-300 flex flex-wrap gap-3 items-center'>
+                <div className='flex items-center gap-2'>
+                  <label className='text-sm font-medium text-gray-700 w-12'>Time:</label>
+                  <select
+                    value={timeFilter}
+                    onChange={(e) => setTimeFilter(e.target.value)}
+                    className='border border-gray-300 rounded px-1 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 w-48'
+                  >
+                    <option value='all'>All Times</option>
+                    {uniqueTimeSlots.map((timeSlot, index) => (
+                      <option key={index} value={timeSlot}>
+                        {timeSlot}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                <div className='flex items-center gap-2'>
+                  <label className='text-sm font-medium text-gray-700 w-12'>Mode:</label>
+                  <select
+                    value={modeFilter}
+                    onChange={(e) => setModeFilter(e.target.value)}
+                    className='border border-gray-300 rounded px-1 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 w-48'
+                  >
+                    <option value='all'>All</option>
+                    <option value='online'>Online</option>
+                    <option value='offline'>Offline</option>
+                  </select>
+                </div>
+
+                <div className='flex items-center gap-2'>
+                  <label className='text-sm font-medium text-gray-700 w-12'>Type:</label>
+                  <select
+                    value={typeFilter}
+                    onChange={(e) => setTypeFilter(e.target.value)}
+                    className='border border-gray-300 rounded px-1 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 w-48'
+                  >
+                    <option value='all'>All</option>
+                    <option value='onlinepersonal'>Online Personal</option>
+                    <option value='onlineprenatal'>Online Prenatal</option>
+                    <option value='offlinegeneral'>Offline General</option>
+                    <option value='offlinepersonal'>Offline Personal</option>
+                    <option value='offlineprenatal'>Offline Semi-Prenatal</option>
+                    <option value='offlinesemiprivate'>Offline Semi-Private</option>
+                    <option value='offlinekids'>Offline Kids</option>
+                    <option value='offlineteens'>Offline Teens</option>
+                    <option value='offlineseniors'>Offline Seniors</option>
+                  </select>
+                </div>
+
+                {(timeFilter !== 'all' || modeFilter !== 'all' || typeFilter !== 'all') && (
+                  <button
+                    onClick={() => {
+                      setTimeFilter('all')
+                      setModeFilter('all')
+                      setTypeFilter('all')
+                    }}
+                    className='text-sm text-blue-600 hover:text-blue-800 font-medium underline'
+                  >
+                    Clear Filters
+                  </button>
+                )}
               </div>
     
               <div
@@ -76,12 +183,13 @@ const RecentSessions = ({currentMonthName, totalSessionsInCurrentMonth, lastFive
               >
                 <table className='w-full'>
                   <tbody className=''>
-                    {lastFiveSessions && lastFiveSessions.map(session => (
+                    {filteredSessions && filteredSessions.length > 0 ? (
+                      filteredSessions.map(session => (
                     <tr key={session.sessionId}
                       className='relative transform scale-100
                                               text-sm py-1 border-b-2 border-blue-100 cursor-default'
                     >
-                      <td className='pl-2 whitespace-no-wrap'>
+                      <td className='pl-4 lg:pl-6 whitespace-no-wrap'>
                         <div className='text-gray-400'>{new Date(session.date).toLocaleString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</div>
                         <div>{new Date(session.start).toLocaleString('en-US', { hour: 'numeric', minute: 'numeric'})} to  {new Date(session.end).toLocaleString('en-US', { hour: 'numeric', minute: 'numeric' })}</div>
                       </td>
@@ -94,7 +202,7 @@ const RecentSessions = ({currentMonthName, totalSessionsInCurrentMonth, lastFive
                           <strong>Type:</strong> {session.sessionType.replace(/(Offline|Online)/gi, '').trim()}
                         </div>
                         <div className='leading-5 text-gray-900 capitalize'>
-                          <strong>Student:</strong> {session.students !== 'N/A' ? <span className='text-blue-600'>{session.students}</span> : 'N/A'}
+                          <strong>Student:</strong> {session.students !== 'N/A' ? <span className='bg-yellow-100 text-yellow-800 text-xs px-3 py-1 rounded-full'>{session.students}</span> : 'N/A'}
                         </div>
                       </td>
                       <td>
@@ -113,7 +221,14 @@ const RecentSessions = ({currentMonthName, totalSessionsInCurrentMonth, lastFive
                         </div>
                       </td>
                     </tr>
-                    ))}
+                      ))
+                    ) : (
+                      <tr>
+                        <td colSpan='3' className='px-5 py-8 text-center text-gray-500'>
+                          No sessions found matching the selected filters.
+                        </td>
+                      </tr>
+                    )}
                   </tbody>
                 </table>
               </div>  

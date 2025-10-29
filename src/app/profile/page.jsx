@@ -28,7 +28,7 @@ const ProfilePage = async () => {
   const currentMonthName = MONTH_NAMES[currentMonth]
 
   // Get session statistics
-  const { lastFiveSessions, totalSessionsInCurrentMonth } = getSessionStats(
+  const { sortedSessions, totalSessionsInCurrentMonth } = getSessionStats(
     data.sessions,
     currentMonth
   )
@@ -43,7 +43,7 @@ const ProfilePage = async () => {
       <main className='container mx-auto mt-10 p-4 flex-1'>
         <ProfileTabs
           currentMonthName={currentMonthName}
-          lastFiveSessions={lastFiveSessions}
+          sortedSessions={sortedSessions}
           totalSessionsInCurrentMonth={totalSessionsInCurrentMonth}
           data={data}
         />

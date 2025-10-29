@@ -204,7 +204,10 @@ const AddSessionsForm = ({ userId }) => {
   }
 
   return (
-    <div className='mt-6 mb-6'>
+    <div className='mt-8'>
+      <div className='text-xl font-bold px-6 py-4 bg-gradient-to-r from-slate-600 to-slate-800 rounded-t-lg text-white shadow border-b border-gray-300'>
+            Register your sessions
+        </div>
       <div className='mx-auto shadow-xl p-6 bg-white rounded-sm'>
         {showSuccess && (
           <motion.div
@@ -230,9 +233,6 @@ const AddSessionsForm = ({ userId }) => {
             </div>
           </motion.div>
         )}
-        <h2 className='text-xl text-slate-800 font-semibold'>
-          Register your sessions
-        </h2>
         <form
           onSubmit={handleSubmit}
           className='my-5 flex flex-col items-start'
