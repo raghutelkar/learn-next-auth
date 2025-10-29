@@ -76,11 +76,13 @@ const TotalSummary = ({currentMonthName, totalSessionsInCurrentMonth, sortedSess
       <div className='bg-white rounded-lg shadow-xl'>
         {/* Header */}
         <div className='bg-gradient-to-r from-slate-600 to-slate-800 text-white px-6 py-4 rounded-t-lg'>
-          <h2 className='text-2xl font-bold'>Session Summary - {currentMonthName}</h2>
-          <p className='text-blue-100 mt-1'>Total Sessions: {totalSessionsInCurrentMonth}</p>
+          <h2 className='text-xl font-bold'>Session Summary - {currentMonthName}</h2>
+          { sortedTimeSlots.length > 0 && (<p className='text-blue-100 mt-1'>Total Sessions: {totalSessionsInCurrentMonth}</p> )}
         </div>
 
         {/* Overall Statistics */}
+        {sortedTimeSlots.length > 0 ? (
+        <>
         <div className='p-6 border-b border-gray-200'>
           <h3 className='text-lg font-semibold text-gray-800 mb-4'>Overall Statistics</h3>
           <div className='grid grid-cols-1 md:grid-cols-2 gap-4 mb-6'>
@@ -196,13 +198,13 @@ const TotalSummary = ({currentMonthName, totalSessionsInCurrentMonth, sortedSess
               )
             })}
           </div>
-
-          {sortedTimeSlots.length === 0 && (
-            <div className='text-center py-8 text-gray-500'>
-              No sessions found for {currentMonthName}
-            </div>
-          )}
         </div>
+        </>
+        ): (
+            <div className='text-center py-8 text-gray-500'>
+              No sessions found
+            </div>
+        )}
       </div>
     </div>
   )

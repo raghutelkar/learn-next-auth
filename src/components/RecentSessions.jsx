@@ -113,6 +113,7 @@ const RecentSessions = ({sortedSessions}) => {
               </div>
 
               {/* Filters */}
+              {filteredSessions && filteredSessions.length > 0 && (
               <div className='bg-gray-50 px-5 py-3 border-b border-gray-300 flex flex-wrap gap-3 items-center'>
                 <div className='flex items-center gap-2'>
                   <label className='text-sm font-medium text-gray-700 w-12'>Time:</label>
@@ -176,13 +177,14 @@ const RecentSessions = ({sortedSessions}) => {
                   </button>
                 )}
               </div>
+              )}
     
               <div
                 className='w-full overflow-auto shadow-xl bg-white flex-1'
                 id='journal-scroll'
               >
                 <table className='w-full'>
-                  <tbody className=''>
+                  <tbody className=''>                    
                     {filteredSessions && filteredSessions.length > 0 ? (
                       filteredSessions.map(session => (
                     <tr key={session.sessionId}
@@ -225,7 +227,7 @@ const RecentSessions = ({sortedSessions}) => {
                     ) : (
                       <tr>
                         <td colSpan='3' className='px-5 py-8 text-center text-gray-500'>
-                          No sessions found matching the selected filters.
+                          No sessions found
                         </td>
                       </tr>
                     )}
