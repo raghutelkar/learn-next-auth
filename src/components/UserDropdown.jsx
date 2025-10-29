@@ -1,3 +1,6 @@
+'use client';
+
+import { usePathname } from 'next/navigation';
 import Link from 'next/link'
 import Logout from '@/components/Logout'
 
@@ -20,6 +23,7 @@ const DashboardIcon = () => (
  * User dropdown menu component
  */
 const UserDropdown = ({ userRole }) => {
+  const pathname = usePathname();
   const isAdmin = userRole === 'admin'
 
   return (
@@ -50,8 +54,22 @@ const UserDropdown = ({ userRole }) => {
         aria-label='User menu options'
       >
         <Logout />
-        
-        {isAdmin && (
+
+        {isAdmin && pathname === '/admin' && (
+          <>
+            <hr className='my-2 -mx-2 border-gray-200' />
+            <Link
+              href='/profile'
+              className='text-[15px] text-slate-800 font-medium cursor-pointer flex items-center p-2 rounded-md hover:bg-gray-100 transition duration-300 ease-in-out'
+              role='menuitem'
+            >
+              <DashboardIcon />
+              Profile
+            </Link>
+          </>
+        )}
+
+          {pathname === '/profile' && (
           <>
             <hr className='my-2 -mx-2 border-gray-200' />
             <Link
