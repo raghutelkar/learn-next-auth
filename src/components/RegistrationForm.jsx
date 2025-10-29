@@ -19,7 +19,7 @@ const ERROR_MESSAGES = {
 }
 
 const INPUT_STYLES =
-  'bg-slate-100 w-full text-sm text-slate-900 px-4 py-3 rounded-md outline-0 border border-gray-200 focus:border-blue-600 focus:bg-transparent transition-colors'
+  'bg-slate-100 w-full text-base text-slate-900 px-4 py-3 rounded-md outline-0 border border-gray-200 focus:border-blue-600 focus:bg-transparent transition-colors'
 const LABEL_STYLES = 'text-sm text-slate-900 font-medium mb-2 block'
 
 const RegistrationForm = () => {

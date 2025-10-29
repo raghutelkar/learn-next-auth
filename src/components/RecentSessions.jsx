@@ -94,7 +94,7 @@ const RecentSessions = ({currentMonthName, totalSessionsInCurrentMonth, lastFive
                           <strong>Type:</strong> {session.sessionType.replace(/(Offline|Online)/gi, '').trim()}
                         </div>
                         <div className='leading-5 text-gray-900 capitalize'>
-                          <strong>Student:</strong> {session.students !== 'N/A' ? session.students : 'N/A'}
+                          <strong>Student:</strong> {session.students !== 'N/A' ? <span className='text-blue-600'>{session.students}</span> : 'N/A'}
                         </div>
                       </td>
                       <td>

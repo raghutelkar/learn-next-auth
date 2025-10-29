@@ -29,6 +29,25 @@ const AddSessionsForm = ({ userId }) => {
     setTimeSlot('')
   }
 
+  // Validate time to only allow 00, 15, 30, 45 minutes
+  const validateTime = (timeValue) => {
+    if (!timeValue) return timeValue;
+    const [hours, minutes] = timeValue.split(':');
+    const validMinutes = ['00', '15', '30', '45'];
+    if (!validMinutes.includes(minutes)) {
+      // Round to nearest valid minute
+      const minuteNum = parseInt(minutes);
+      let roundedMinute;
+      if (minuteNum < 8) roundedMinute = '00';
+      else if (minuteNum < 23) roundedMinute = '15';
+      else if (minuteNum < 38) roundedMinute = '30';
+      else if (minuteNum < 53) roundedMinute = '45';
+      else roundedMinute = '00';
+      return `${hours}:${roundedMinute}`;
+    }
+    return timeValue;
+  };
+
   // Calculate the date range
   const today = new Date()
   const fiveDaysAgo = new Date(today)
@@ -68,8 +87,9 @@ const AddSessionsForm = ({ userId }) => {
         return false
       }
 
-      // Time must be selected
+      // Time must be selected and different
       if (!startTime || !endTime) return false
+      if (startTime === endTime) return false
     } else if (selectedMode === 'offline') {
       if (!selectedOfflineSessionType) return false
 
@@ -83,6 +103,7 @@ const AddSessionsForm = ({ userId }) => {
         if (!timeSlot) return false
       } else {
         if (!startTime || !endTime) return false
+        if (startTime === endTime) return false
       }
     }
 
@@ -463,8 +484,12 @@ const AddSessionsForm = ({ userId }) => {
                     type='time'
                     id='startTime'
                     name='startTime'
+                    min='05:00'
+                    max='19:00'
+                    step='900'
                     value={startTime}
                     onChange={(e) => setStartTime(e.target.value)}
+                    onBlur={(e) => setStartTime(validateTime(e.target.value))}
                     className='border border-gray-500 rounded py-1 w-full bg-white outline-none text-slate-500'
                     required
                   />
@@ -480,8 +505,12 @@ const AddSessionsForm = ({ userId }) => {
                     type='time'
                     id='endTime'
                     name='endTime'
+                    min='05:00'
+                    max='19:00'
+                    step='900'
                     value={endTime}
                     onChange={(e) => setEndTime(e.target.value)}
+                    onBlur={(e) => setEndTime(validateTime(e.target.value))}
                     className='border border-gray-500 rounded py-1 w-full bg-white outline-none text-slate-500'
                     required
                   />

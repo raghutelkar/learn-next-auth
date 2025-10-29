@@ -11,10 +11,51 @@ const EditSessionForm = ({ session, onCancel, onEdit }) => {
     const [students, setStudents] = useState(session.students || "");
     const [startTime, setStartTime] = useState(new Date(session.start).toTimeString().slice(0, 5));
     const [endTime, setEndTime] = useState(new Date(session.end).toTimeString().slice(0, 5));
-    const [timeSlot, setTimeSlot] = useState("");
+    
+    // Initialize timeSlot with existing session times if it's an offline general session
+    const initialTimeSlot = session.mode === "offline" && session.sessionType === "offlinegeneral" 
+        ? `${new Date(session.start).toTimeString().slice(0, 5)},${new Date(session.end).toTimeString().slice(0, 5)}`
+        : "";
+    const [timeSlot, setTimeSlot] = useState(initialTimeSlot);
+
+    // Handle mode change and reset dependent fields
+    const handleModeChange = (newMode) => {
+        setSelectedMode(newMode);
+        setSelectedSessionType("");
+        setStudents("");
+        setTimeSlot("");
+    };
+
+    // Validate time to only allow 00, 15, 30, 45 minutes
+    const validateTime = (timeValue) => {
+        if (!timeValue) return timeValue;
+        const [hours, minutes] = timeValue.split(':');
+        const validMinutes = ['00', '15', '30', '45'];
+        if (!validMinutes.includes(minutes)) {
+            // Round to nearest valid minute
+            const minuteNum = parseInt(minutes);
+            let roundedMinute;
+            if (minuteNum < 8) roundedMinute = '00';
+            else if (minuteNum < 23) roundedMinute = '15';
+            else if (minuteNum < 38) roundedMinute = '30';
+            else if (minuteNum < 53) roundedMinute = '45';
+            else roundedMinute = '00';
+            return `${hours}:${roundedMinute}`;
+        }
+        return timeValue;
+    };
 
     // Format the date to YYYY-MM-DD for the input
     const formattedDate = new Date(session.date).toISOString().split('T')[0];
+
+    // Calculate the date range (same as AddSessionsForm)
+    const today = new Date();
+    const fiveDaysAgo = new Date(today);
+    fiveDaysAgo.setDate(today.getDate() - 5);
+
+    // Format dates to YYYY-MM-DD for the input attributes
+    const maxDate = today.toISOString().split('T')[0];
+    const minDate = fiveDaysAgo.toISOString().split('T')[0];
 
     const timeSlots = [
         { label: "6:00 AM - 7:00 AM", start: "06:00", end: "07:00" },
@@ -24,6 +65,40 @@ const EditSessionForm = ({ session, onCancel, onEdit }) => {
         { label: "6:00 PM - 7:00 PM", start: "18:00", end: "19:00" },
         { label: "7:00 PM - 8:00 PM", start: "19:00", end: "20:00" },
     ];
+
+    // Check if all required fields are filled
+    const isFormValid = () => {
+        // Mode must be selected
+        if (!selectedMode) return false;
+
+        // Session type must be selected
+        if (!selectedSessionType) return false;
+
+        // Check student selection for personal/prenatal sessions
+        if (selectedMode === "online") {
+            if ((selectedSessionType === "onlinepersonal" || selectedSessionType === "onlineprenatal") && !students) {
+                return false;
+            }
+            // Time must be selected for online sessions and different
+            if (!startTime || !endTime) return false;
+            if (startTime === endTime) return false;
+        } else if (selectedMode === "offline") {
+            // Student required for offline personal
+            if (selectedSessionType === "offlinepersonal" && !students) {
+                return false;
+            }
+            
+            // Time validation based on session type
+            if (selectedSessionType === "offlinegeneral") {
+                if (!timeSlot) return false;
+            } else {
+                if (!startTime || !endTime) return false;
+                if (startTime === endTime) return false;
+            }
+        }
+
+        return true;
+    };
 
     async function handleSubmit(event) {
         event.preventDefault();
@@ -106,7 +181,7 @@ const EditSessionForm = ({ session, onCancel, onEdit }) => {
                             name="mode"
                             value="online"
                             checked={selectedMode === "online"}
-                            onChange={(e) => setSelectedMode(e.target.value)}
+                            onChange={(e) => handleModeChange(e.target.value)}
                             className="form-radio h-4 w-4 text-orange-300"
                         />
                         <span className="ml-2">Online</span>
@@ -117,7 +192,7 @@ const EditSessionForm = ({ session, onCancel, onEdit }) => {
                             name="mode"
                             value="offline"
                             checked={selectedMode === "offline"}
-                            onChange={(e) => setSelectedMode(e.target.value)}
+                            onChange={(e) => handleModeChange(e.target.value)}
                             className="form-radio h-4 w-4 text-orange-300"
                         />
                         <span className="ml-2">Offline</span>
@@ -134,7 +209,10 @@ const EditSessionForm = ({ session, onCancel, onEdit }) => {
                     name="sessionType"
                     id="sessionType"
                     value={selectedSessionType}
-                    onChange={(e) => setSelectedSessionType(e.target.value)}
+                    onChange={(e) => {
+                        setSelectedSessionType(e.target.value);
+                        setStudents("");
+                    }}
                     required
                 >
                     <option value="">Please select a session type</option>
@@ -212,6 +290,8 @@ const EditSessionForm = ({ session, onCancel, onEdit }) => {
                     type="date"
                     name="date"
                     id="date"
+                    min={minDate}
+                    max={maxDate}
                     defaultValue={formattedDate}
                     required
                 />
@@ -228,8 +308,12 @@ const EditSessionForm = ({ session, onCancel, onEdit }) => {
                                 type="time"
                                 id="startTime"
                                 name="startTime"
+                                min="05:00"
+                                max="19:00"
+                                step="900"
                                 value={startTime}
                                 onChange={(e) => setStartTime(e.target.value)}
+                                onBlur={(e) => setStartTime(validateTime(e.target.value))}
                                 className="border border-gray-500 rounded p-2 w-full bg-white"
                                 required
                             />
@@ -242,8 +326,12 @@ const EditSessionForm = ({ session, onCancel, onEdit }) => {
                                 type="time"
                                 id="endTime"
                                 name="endTime"
+                                min="05:00"
+                                max="19:00"
+                                step="900"
                                 value={endTime}
                                 onChange={(e) => setEndTime(e.target.value)}
+                                onBlur={(e) => setEndTime(validateTime(e.target.value))}
                                 className="border border-gray-500 rounded p-2 w-full bg-white"
                                 required
                             />
@@ -279,8 +367,12 @@ const EditSessionForm = ({ session, onCancel, onEdit }) => {
             <div className="flex gap-2 mt-4">
                 <button
                     type="submit"
-                    disabled={isLoading}
-                    className="bg-blue-500 text-white rounded px-4 py-2 hover:bg-blue-600 transition-colors"
+                    disabled={!isFormValid() || isLoading}
+                    className={`rounded px-4 py-2 transition-colors ${
+                        isFormValid() && !isLoading
+                            ? 'bg-blue-500 text-white hover:bg-blue-600 cursor-pointer'
+                            : 'bg-gray-300 text-gray-500 cursor-not-allowed opacity-50'
+                    }`}
                 >
                     {isLoading ? 'Updating...' : 'Update Session'}
                 </button>
