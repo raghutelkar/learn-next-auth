@@ -29,7 +29,7 @@ const LeftBranding = ({ routes, from }) => {
       </em>
 
       <p className='text-[15px] mt-6 lg:mt-12 text-slate-600'>
-        Don&apos;t have an account?{' '}
+        {from === 'register' ? 'Already have an account? ' : 'Don\'\t have an account? '} 
         <Link
           href={routes}
           className='text-blue-600 font-medium hover:underline ml-1'
