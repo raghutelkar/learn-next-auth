@@ -18,6 +18,11 @@ export const metadata = {
     maximumScale: 1,
     userScalable: false,
   },
+  icons: {
+    icon: '/sampurnah-favicon-32x32.png',
+    shortcut: '/sampurnah-favicon-32x32.png',
+    apple: '/sampurnah-favicon-32x32.png',
+  },
 };
 
 export default async function RootLayout({ children }) {
