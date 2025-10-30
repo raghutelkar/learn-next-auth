@@ -51,6 +51,8 @@ const AdminPage = () => {
             const data = await fetchUserData(selectedName);
             setUserData(data);
             setLoading(false);
+        } else {
+            setUserData(null);
         }
     };
 
@@ -86,10 +88,13 @@ const AdminPage = () => {
 
     return (
         <>
-            <Header userRole={session?.user?.role} />
+            <Header userName={session?.user?.name} userRole={session?.user?.role} />
             <div className="p-6">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-                <div>
+                <h2 className='container mx-auto text-xl font-bold pt-6 pb-4'>
+                        Dashboard
+                    </h2>
+                <div className="container mx-auto flex flex-col shadow-lg">
+                <div className='pb-4 p-6'>
                     <label htmlFor="userSelect" className="block text-sm font-medium text-gray-700 mb-2">
                         Select User
                     </label>
@@ -107,9 +112,8 @@ const AdminPage = () => {
                         ))}
                     </select>
                 </div>
-
                 {userData && (
-                    <div>
+                    <div className='pb-6 p-6'>
                         <label htmlFor="monthSelect" className="block text-sm font-medium text-gray-700 mb-2">
                             Filter by Month
                         </label>
@@ -125,23 +129,15 @@ const AdminPage = () => {
                                 </option>
                             ))}
                         </select>
-                    </div>
-                )}
-            </div>
-
-            {loading && <div>Loading...</div>}
-
-            {userData && (
-                <div className="space-y-6">
-                    <div className="bg-white p-6 rounded-lg shadow">
+                    <div className="bg-white p-6">
                         <h2 className="text-xl font-bold mb-4">User Profile</h2>
                         <p><strong>Name:</strong> {userData.profile?.name}</p>
                         <p><strong>Email:</strong> {userData.profile?.email}</p>
                         <p className="mt-2"><strong>Total Sessions:</strong> {calculateStats(userData.sessions).totalSessions}</p>
                     </div>
-
+                <div className="space-y-6">
                     {/* Tabs */}
-                    <div>
+                    <main className='container mx-auto p-4 flex-1'>
                         <ul className="flex bg-gray-100 items-center rounded-md overflow-hidden">
                             <li
                                 onClick={() => setActiveTab('recentSessions')}
@@ -184,9 +180,21 @@ const AdminPage = () => {
                                 sortedSessions={sortedSessions}
                             />
                         </div>
+                    </main>
+                </div>
+                    </div>
+                )}
+            </div>
+
+            {loading && (
+                <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+                    <div className="bg-white p-6 rounded-lg shadow-xl flex flex-col items-center">
+                        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-500"></div>
+                        <p className="mt-4 text-gray-700 font-medium">Loading...</p>
                     </div>
                 </div>
             )}
+
         </div>
         </>
     );

@@ -203,6 +203,29 @@ const AddSessionsForm = ({ userId }) => {
     }
   }
 
+    const ModeRadioButton = ({ id, value, label, icon }) => (
+    <div className='relative'>
+      <input
+        type='radio'
+        name='mode'
+        id={id}
+        value={value}
+        checked={selectedMode === value}
+        onChange={handleModeChange}
+        className='hidden peer'
+      />
+      <label
+        htmlFor={id}
+        className='inline-flex items-center justify-between w-full p-3.5 bg-white border-2 rounded-lg cursor-pointer group border-neutral-200/70 text-neutral-600 peer-checked:border-blue-400 peer-checked:text-neutral-900 peer-checked:bg-blue-200/50 hover:text-neutral-900 hover:border-green-500'
+      >
+        <div className='flex items-center space-x-5'>
+          {icon}
+          <div className='text-lg font-semibold'>{label}</div>
+        </div>
+      </label>
+    </div>
+  )
+
   return (
     <div className='mt-8'>
       <div className='text-xl font-bold px-6 py-4 bg-gradient-to-r from-slate-600 to-slate-800 rounded-t-lg text-white shadow border-b border-gray-300'>
@@ -237,85 +260,35 @@ const AddSessionsForm = ({ userId }) => {
           onSubmit={handleSubmit}
           className='my-5 flex flex-col items-start'
         >
-          <div className='flex items-start justify-start mb-4'>
+          <div className='flex items-start justify-start mb-4 w-full'>
             <div className='mx-auto'>
-              <div className='mx-auto'>
-                <div className='flex gap-4'>
-                  <div className='relative'>
-                    <input
-                      type='radio'
-                      name='mode'
-                      id='mode-online'
-                      value='online'
-                      checked={selectedMode === 'online'}
-                      onChange={handleModeChange}
-                      className='hidden peer'
-                    />
-                    <label
-                      htmlFor='mode-online'
-                      className='inline-flex items-center justify-between w-full p-3.5 bg-white border-2 rounded-lg cursor-pointer group border-neutral-200/70 text-neutral-600 peer-checked:border-blue-400 peer-checked:text-neutral-900 peer-checked:bg-blue-200/50 hover:text-neutral-900 hover:border-green-500'
-                    >
-                      <div className='flex items-center space-x-5'>
-                        <svg
-                          className='w-10 h-auto'
-                          xmlns='http://www.w3.org/2000/svg'
-                          width='1em'
-                          height='1em'
-                          viewBox='0 0 256 256'
-                        >
-                          <g fill='green'>
-                            <path
-                              d='M232 64v128a8 8 0 0 1-8 8H32a8 8 0 0 1-8-8V64a8 8 0 0 1 8-8h192a8 8 0 0 1 8 8'
-                              opacity='0.2'
-                            />
-                            <path d='M251.77 73a8 8 0 0 0-8.21.39L208 97.05V72a16 16 0 0 0-16-16H32a16 16 0 0 0-16 16v112a16 16 0 0 0 16 16h160a16 16 0 0 0 16-16v-25.05l35.56 23.66A8 8 0 0 0 256 176V80a8 8 0 0 0-4.23-7M192 184H32V72h160v112m48-22.95l-32-21.33v-23.44l32-21.33Z' />
-                          </g>
-                        </svg>
-                        <div className='flex flex-col justify-start'>
-                          <div className='w-full text-lg font-semibold'>Online</div>
-                        </div>
-                      </div>
-                    </label>
-                  </div>
-                  <div className='relative'>
-                    <input
-                      type='radio'
-                      name='mode'
-                      id='mode-offline'
-                      value='offline'
-                      checked={selectedMode === 'offline'}
-                      onChange={handleModeChange}
-                      className='hidden peer'
-                    />
-                    <label
-                      htmlFor='mode-offline'
-                      className='inline-flex items-center justify-between w-full p-3.5 bg-white border-2 rounded-lg cursor-pointer group border-neutral-200/70 text-neutral-600 peer-checked:border-blue-400 peer-checked:text-neutral-900 peer-checked:bg-blue-200/50 hover:text-neutral-900 hover:border-green-500'
-                    >
-                      <div className='flex items-center space-x-5'>
-                        <svg
-                          className='w-10 h-auto'
-                          xmlns='http://www.w3.org/2000/svg'
-                          width='1em'
-                          height='1em'
-                          viewBox='0 0 256 256'
-                        >
-                          <g fill='green'>
-                            <path
-                              d='M128 24a80 80 0 0 0-80 80c0 72 80 128 80 128s80-56 80-128a80 80 0 0 0-80-80m0 112a32 32 0 1 1 32-32a32 32 0 0 1-32 32'
-                              opacity='0.2'
-                            />
-                            <path d='M128 16a88.1 88.1 0 0 0-88 88c0 75.3 80 132.17 83.41 134.55a8 8 0 0 0 9.18 0C136 236.17 216 179.3 216 104a88.1 88.1 0 0 0-88-88m0 206c-16.53-13-72-60.75-72-118a72 72 0 0 1 144 0c0 57.23-55.47 105-72 118m0-150a40 40 0 1 0 40 40a40 40 0 0 0-40-40m0 64a24 24 0 1 1 24-24a24 24 0 0 1-24 24' />
-                          </g>
-                        </svg>
-                        <div className='flex flex-col justify-start'>
-                          <div className='w-full text-lg font-semibold'>
-                            Offline
-                          </div>
-                        </div>
-                      </div>
-                    </label>
-                  </div>
-                </div>
+              <div className='flex gap-4'>
+                <ModeRadioButton
+                  id='mode-online'
+                  value='online'
+                  label='Online'
+                  icon={
+                    <svg className='w-10 h-auto' xmlns='http://www.w3.org/2000/svg' viewBox='0 0 256 256'>
+                      <g fill='green'>
+                        <path d='M232 64v128a8 8 0 0 1-8 8H32a8 8 0 0 1-8-8V64a8 8 0 0 1 8-8h192a8 8 0 0 1 8 8' opacity='0.2' />
+                        <path d='M251.77 73a8 8 0 0 0-8.21.39L208 97.05V72a16 16 0 0 0-16-16H32a16 16 0 0 0-16 16v112a16 16 0 0 0 16 16h160a16 16 0 0 0 16-16v-25.05l35.56 23.66A8 8 0 0 0 256 176V80a8 8 0 0 0-4.23-7M192 184H32V72h160v112m48-22.95l-32-21.33v-23.44l32-21.33Z' />
+                      </g>
+                    </svg>
+                  }
+                />
+                <ModeRadioButton
+                  id='mode-offline'
+                  value='offline'
+                  label='Offline'
+                  icon={
+                    <svg className='w-10 h-auto' xmlns='http://www.w3.org/2000/svg' viewBox='0 0 256 256'>
+                      <g fill='green'>
+                        <path d='M128 24a80 80 0 0 0-80 80c0 72 80 128 80 128s80-56 80-128a80 80 0 0 0-80-80m0 112a32 32 0 1 1 32-32a32 32 0 0 1-32 32' opacity='0.2' />
+                        <path d='M128 16a88.1 88.1 0 0 0-88 88c0 75.3 80 132.17 83.41 134.55a8 8 0 0 0 9.18 0C136 236.17 216 179.3 216 104a88.1 88.1 0 0 0-88-88m0 206c-16.53-13-72-60.75-72-118a72 72 0 0 1 144 0c0 57.23-55.47 105-72 118m0-150a40 40 0 1 0 40 40a40 40 0 0 0-40-40m0 64a24 24 0 1 1 24-24a24 24 0 0 1-24 24' />
+                      </g>
+                    </svg>
+                  }
+                />
               </div>
             </div>
           </div>
