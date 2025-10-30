@@ -18,12 +18,19 @@ export const GET = async (request) => {
     // Filter students by mode and/or type if specified
     let students = allStudents;
     
-    if (mode) {
+    if (mode && type) {
+      // Combine mode and type to match sessionType format in DB (e.g., "onlinepersonal", "offlinepersonal")
+      const sessionType = `${mode}${type}`;
+      students = students.filter(student => 
+        student.mode === mode && student.sessionType === sessionType
+      );
+    } else if (mode) {
       students = students.filter(student => student.mode === mode);
-    }
-    
-    if (type) {
-      students = students.filter(student => student.sessionType === type);
+    } else if (type) {
+      // If only type is provided, match any mode with that type
+      students = students.filter(student => 
+        student.sessionType.includes(type)
+      );
     }
     
     return NextResponse.json({

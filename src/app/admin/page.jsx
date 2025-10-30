@@ -14,6 +14,7 @@ const AdminPage = () => {
     const [loading, setLoading] = useState(false);
     const [selectedMonth, setSelectedMonth] = useState('');
     const [activeTab, setActiveTab] = useState('recentSessions');
+    const [users, setUsers] = useState([]);
 
     useEffect(() => {
         if (!session || session?.user?.role !== 'admin') {
@@ -21,11 +22,21 @@ const AdminPage = () => {
         }
     }, [session]);
 
-    const users = [
-        { userId: 'YogaUser_1761134495692', name: 'Varsha' },
-        { userId: 'YogaUser_1761137134728', name: 'Raghu' },
-        { userId: 'YogaUser_1761201827965', name: 'Hridhi' }
-    ];
+    // Fetch all users on component mount
+    useEffect(() => {
+        const fetchUsers = async () => {
+            try {
+                const response = await fetch('/api/users');
+                if (response.ok) {
+                    const data = await response.json();
+                    setUsers(data.users || []);
+                }
+            } catch (error) {
+                console.error('Error fetching users:', error);
+            }
+        };
+        fetchUsers();
+    }, []);
 
     const months = [
         { value: '', label: 'All Months' },

@@ -10,8 +10,17 @@ export async function GET(request) {
     const { searchParams } = new URL(request.url);
     const name = searchParams.get('name');
 
+    // If no name is provided, return all users
     if (!name) {
-      return NextResponse.json({ message: "Name is required" }, { status: 400 });
+      const allUsers = await User.find({});
+      return NextResponse.json({
+        users: allUsers.map(user => ({
+          userId: user.userId,
+          name: user.name,
+          email: user.email,
+          role: user.role
+        }))
+      }, { status: 200 });
     }
 
     const profile = await User.findOne({ name });

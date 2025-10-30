@@ -1,7 +1,7 @@
 'use client'
 
 import { useRouter } from 'next/navigation'
-import { useState } from 'react' // Add this import
+import { useState, useEffect } from 'react'
 import { motion } from 'motion/react'
 
 const AddSessionsForm = ({ userId }) => {
@@ -15,6 +15,7 @@ const AddSessionsForm = ({ userId }) => {
   const [endTime, setEndTime] = useState('')
   const [timeSlot, setTimeSlot] = useState('')
   const [students, setStudents] = useState('')
+  const [studentsList, setStudentsList] = useState([])
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [showSuccess, setShowSuccess] = useState(false)
 
@@ -23,11 +24,53 @@ const AddSessionsForm = ({ userId }) => {
     setSelectedSessionType('')
     setSelectedOfflineSessionType('')
     setStudents('')
+    setStudentsList([])
     setSelectedDate('')
     setStartTime('')
     setEndTime('')
     setTimeSlot('')
   }
+
+  // Fetch students based on mode and session type
+  useEffect(() => {
+    const fetchStudents = async () => {
+      let mode = selectedMode
+      let type = null
+
+      // Determine the type based on session type
+      if (selectedMode === 'online') {
+        if (selectedSessionType === 'onlinepersonal') {
+          type = 'personal'
+        } else if (selectedSessionType === 'onlineprenatal') {
+          type = 'prenatal'
+        }
+      } else if (selectedMode === 'offline') {
+        if (selectedOfflineSessionType === 'offlinepersonal') {
+          type = 'personal'
+        }
+      }
+
+      // Only fetch if we have both mode and type
+      if (mode && type) {
+        try {
+          const response = await fetch(`/api/addStudent?mode=${mode}&type=${type}`)
+          if (response.ok) {
+            const data = await response.json()
+            setStudentsList(data.students || [])
+          } else {
+            setStudentsList([])
+          }
+        } catch (error) {
+          console.error('Error fetching students:', error)
+          setStudentsList([])
+        }
+      } else {
+        setStudentsList([])
+      }
+    }
+
+    fetchStudents()
+  }, [selectedMode, selectedSessionType, selectedOfflineSessionType])
 
   // Validate time to only allow 00, 15, 30, 45 minutes
   const validateTime = (timeValue) => {
@@ -336,11 +379,11 @@ const AddSessionsForm = ({ userId }) => {
                   onChange={(e) => setStudents(e.target.value)}
                 >
                   <option value=''>Please select</option>
-                  <option value='Raj'>Raj</option>
-                  <option value='Ravi'>Ravi</option>
-                  <option value='Simran'>Simran</option>
-                  <option value='Aisha'>Aisha</option>
-                  <option value='Rahul'>Rahul</option>
+                  {studentsList.map((student) => (
+                    <option key={student.studentId} value={student.studentName}>
+                      {student.studentName}
+                    </option>
+                  ))}
                 </select>
               </div>
             )}
@@ -385,11 +428,11 @@ const AddSessionsForm = ({ userId }) => {
                 onChange={(e) => setStudents(e.target.value)}
               >
                 <option value=''>Please select</option>
-                <option value='Kiran'>Kiran</option>
-                <option value='Kusha'>Kusha</option>
-                <option value='Romio'>Romio</option>
-                <option value='Riya'>Riya</option>
-                <option value='Gops'>Gops</option>
+                {studentsList.map((student) => (
+                  <option key={student.studentId} value={student.studentName}>
+                    {student.studentName}
+                  </option>
+                ))}
               </select>
             </div>
           )}
@@ -410,11 +453,11 @@ const AddSessionsForm = ({ userId }) => {
                 onChange={(e) => setStudents(e.target.value)}
               >
                 <option value=''>Please select</option>
-                <option value='Ammu'>Ammu</option>
-                <option value='Bina'>Bina</option>
-                <option value='Chhaya'>Chhaya</option>
-                <option value='Dipa'>Dipa</option>
-                <option value='Esha'>Esha</option>
+                {studentsList.map((student) => (
+                  <option key={student.studentId} value={student.studentName}>
+                    {student.studentName}
+                  </option>
+                ))}
               </select>
             </div>
           )}
