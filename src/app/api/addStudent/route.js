@@ -1,13 +1,52 @@
 import { NextResponse } from "next/server";
-import { createStudents } from "@/queries/students";
-
+import { createStudents, getAllStudents } from "@/queries/students";
 import { dbConnect } from "@/lib/mongo";
+
+export const GET = async (request) => {
+  try {
+    // Create a DB Connection
+    await dbConnect();
+    
+    // Get parameters from query string
+    const { searchParams } = new URL(request.url);
+    const mode = searchParams.get('mode');
+    const type = searchParams.get('type');
+    
+    // Get all students
+    const allStudents = await getAllStudents();
+    
+    // Filter students by mode and/or type if specified
+    let students = allStudents;
+    
+    if (mode) {
+      students = students.filter(student => student.mode === mode);
+    }
+    
+    if (type) {
+      students = students.filter(student => student.sessionType === type);
+    }
+    
+    return NextResponse.json({
+      students: students.map(student => ({
+        mode: student.mode,
+        studentId: student.studentId,
+        studentName: student.studentName,
+        sessionType: student.sessionType
+      }))
+    }, { status: 200 });
+  } catch (err) {
+    return new NextResponse(err.message, {
+      status: 500,
+    });
+  }
+}
 
 export const POST = async (request) => {
   const {mode, studentId, studentName, sessionType} = await request.json();
 
-  // Create a DB Conenction
+  // Create a DB Connection
   await dbConnect();
+  
   // Form a DB payload
   const newStudent = {
     mode,
@@ -15,6 +54,7 @@ export const POST = async (request) => {
     studentName,
     sessionType
   }
+  
   // Update the DB
   try {
     await createStudents(newStudent);
@@ -27,5 +67,4 @@ export const POST = async (request) => {
   return new NextResponse("New Student has been added", {
     status: 201,
   });
-
- }
+}
