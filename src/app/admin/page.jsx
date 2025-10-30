@@ -124,7 +124,8 @@ const AdminPage = () => {
                     </select>
                 </div>
                 {userData && (
-                    <div className='pb-6 p-6'>
+                    <div className='pb-6'>
+                        <div className='p-6'>
                         <label htmlFor="monthSelect" className="block text-sm font-medium text-gray-700 mb-2">
                             Filter by Month
                         </label>
@@ -140,6 +141,7 @@ const AdminPage = () => {
                                 </option>
                             ))}
                         </select>
+                        </div>
                     <div className="bg-white p-6">
                         <h2 className="text-xl font-bold mb-4">User Profile</h2>
                         <p><strong>Name:</strong> {userData.profile?.name}</p>

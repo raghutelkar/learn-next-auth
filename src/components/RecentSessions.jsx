@@ -12,6 +12,7 @@ const RecentSessions = ({sortedSessions}) => {
   const [timeFilter, setTimeFilter] = useState('all')
   const [modeFilter, setModeFilter] = useState('all')
   const [typeFilter, setTypeFilter] = useState('all')
+  const [showFilters, setShowFilters] = useState(false)
 
   // Get unique time slots from sessions data
   const uniqueTimeSlots = [...new Set(
@@ -108,12 +109,23 @@ const RecentSessions = ({sortedSessions}) => {
           </motion.div>
               )}
               
-              <div className='text-xl font-bold px-6 py-4 bg-gradient-to-r from-slate-600 to-slate-800 rounded-t-lg text-white shadow border-b border-gray-300'>
-                Recent sessions
+              <div className='text-xl font-bold px-6 py-4 bg-gradient-to-r from-slate-600 to-slate-800 rounded-t-lg text-white shadow border-b border-gray-300 flex justify-between items-center'>
+                <span>Recent sessions</span>
+                {filteredSessions && filteredSessions.length > 0 && (
+                  <button
+                    onClick={() => setShowFilters(!showFilters)}
+                    className='text-sm bg-white text-slate-700 px-4 py-2 rounded hover:bg-gray-100 transition-colors flex items-center gap-2'
+                  >
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
+                    </svg>
+                    {showFilters ? 'Hide Filters' : 'Show Filters'}
+                  </button>
+                )}
               </div>
 
               {/* Filters */}
-              {filteredSessions && filteredSessions.length > 0 && (
+              {showFilters && filteredSessions && filteredSessions.length > 0 && (
               <div className='bg-gray-50 px-5 py-3 border-b border-gray-300 flex flex-wrap gap-3 items-center'>
                 <div className='flex items-center gap-2'>
                   <label className='text-sm font-medium text-gray-700 w-12'>Time:</label>
@@ -152,15 +164,15 @@ const RecentSessions = ({sortedSessions}) => {
                     className='border border-gray-300 rounded px-1 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 w-48'
                   >
                     <option value='all'>All</option>
-                    <option value='onlinepersonal'>Online Personal</option>
-                    <option value='onlineprenatal'>Online Prenatal</option>
-                    <option value='offlinegeneral'>Offline General</option>
-                    <option value='offlinepersonal'>Offline Personal</option>
-                    <option value='offlineprenatal'>Offline Semi-Prenatal</option>
-                    <option value='offlinesemiprivate'>Offline Semi-Private</option>
-                    <option value='offlinekids'>Offline Kids</option>
-                    <option value='offlineteens'>Offline Teens</option>
-                    <option value='offlineseniors'>Offline Seniors</option>
+                    <option value='onlinepersonal'>Personal</option>
+                    <option value='onlineprenatal'>Prenatal</option>
+                    <option value='offlinegeneral'>General</option>
+                    <option value='offlinepersonal'>Personal</option>
+                    <option value='offlineprenatal'>Semi-Prenatal</option>
+                    <option value='offlinesemiprivate'>Semi-Private</option>
+                    <option value='offlinekids'>Kids</option>
+                    <option value='offlineteens'>Teens</option>
+                    <option value='offlineseniors'>Seniors</option>
                   </select>
                 </div>
 
