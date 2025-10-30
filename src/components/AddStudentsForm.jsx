@@ -102,7 +102,7 @@ const AddStudentsForm = () => {
   }
 
   return (
-    <div className='container mx-auto mt-8'>
+    <div className='container mx-auto mt-8 px-6'>
       <div className='text-xl font-bold px-6 py-4 bg-gradient-to-r from-slate-600 to-slate-800 rounded-t-lg text-white shadow border-b border-gray-300'>
         Add Students
       </div>
