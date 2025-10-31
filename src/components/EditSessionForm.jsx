@@ -1,14 +1,17 @@
 'use client'
 
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { motion } from 'motion/react';
 
 const EditSessionForm = ({ session, onCancel, onEdit }) => {
     const router = useRouter();
     const [isLoading, setIsLoading] = useState(false);
+    const [error, setError] = useState('');
     const [selectedMode, setSelectedMode] = useState(session.mode || "");
     const [selectedSessionType, setSelectedSessionType] = useState(session.sessionType || "");
     const [students, setStudents] = useState(session.students || "");
+    const [studentsList, setStudentsList] = useState([]);
     const [startTime, setStartTime] = useState(new Date(session.start).toTimeString().slice(0, 5));
     const [endTime, setEndTime] = useState(new Date(session.end).toTimeString().slice(0, 5));
     
@@ -18,11 +21,53 @@ const EditSessionForm = ({ session, onCancel, onEdit }) => {
         : "";
     const [timeSlot, setTimeSlot] = useState(initialTimeSlot);
 
+    // Fetch students based on mode and session type
+    useEffect(() => {
+        const fetchStudents = async () => {
+            let mode = selectedMode;
+            let type = null;
+
+            // Determine the type based on session type
+            if (selectedMode === 'online') {
+                if (selectedSessionType === 'onlinepersonal') {
+                    type = 'personal';
+                } else if (selectedSessionType === 'onlineprenatal') {
+                    type = 'prenatal';
+                }
+            } else if (selectedMode === 'offline') {
+                if (selectedSessionType === 'offlinepersonal') {
+                    type = 'personal';
+                }
+            }
+
+            // Only fetch if we have both mode and type
+            if (mode && type) {
+                try {
+                    const response = await fetch(`/api/addStudent?mode=${mode}&type=${type}`);
+                    if (response.ok) {
+                        const data = await response.json();
+                        setStudentsList(data.students || []);
+                    } else {
+                        setStudentsList([]);
+                    }
+                } catch (error) {
+                    console.error('Error fetching students:', error);
+                    setStudentsList([]);
+                }
+            } else {
+                setStudentsList([]);
+            }
+        };
+
+        fetchStudents();
+    }, [selectedMode, selectedSessionType]);
+
     // Handle mode change and reset dependent fields
     const handleModeChange = (newMode) => {
         setSelectedMode(newMode);
         setSelectedSessionType("");
         setStudents("");
+        setStudentsList([]);
         setTimeSlot("");
     };
 
@@ -57,14 +102,14 @@ const EditSessionForm = ({ session, onCancel, onEdit }) => {
     const maxDate = today.toISOString().split('T')[0];
     const minDate = fiveDaysAgo.toISOString().split('T')[0];
 
-    const timeSlots = [
-        { label: "6:00 AM - 7:00 AM", start: "06:00", end: "07:00" },
-        { label: "7:00 AM - 8:00 AM", start: "07:00", end: "08:00" },
-        { label: "8:00 AM - 9:00 AM", start: "08:00", end: "09:00" },
-        { label: "5:00 PM - 6:00 PM", start: "17:00", end: "18:00" },
-        { label: "6:00 PM - 7:00 PM", start: "18:00", end: "19:00" },
-        { label: "7:00 PM - 8:00 PM", start: "19:00", end: "20:00" },
-    ];
+  const timeSlots = [
+    { label: '5:30 AM - 6:30 AM', start: '05:30', end: '06:30' },
+    { label: '6:40 AM - 7:30 AM', start: '06:40', end: '07:30' },
+    { label: '7:30 AM - 8:30 AM', start: '07:30', end: '08:30' },
+    { label: '8:30 AM - 9:30 AM', start: '08:30', end: '09:30' },
+    { label: '10:00 AM - 11:00 AM', start: '10:00', end: '11:00' },
+    { label: '5:30 PM - 6:30 PM', start: '17:30', end: '18:30' },
+  ]
 
     // Check if all required fields are filled
     const isFormValid = () => {
@@ -116,14 +161,39 @@ const EditSessionForm = ({ session, onCancel, onEdit }) => {
                 endTime = formData.get('endTime');
                 
                 if (!startTime || !endTime) {
-                    alert('Please select both start and end times');
+                    setError('Please select both start and end times');
+                    setIsLoading(false);
+                    setTimeout(() => setError(''), 5000);
+                    return;
+                }
+
+                // Validate duration doesn't exceed 90 minutes
+                const [startHours, startMinutes] = startTime.split(':').map(Number);
+                const [endHours, endMinutes] = endTime.split(':').map(Number);
+                const startTimeInMinutes = startHours * 60 + startMinutes;
+                const endTimeInMinutes = endHours * 60 + endMinutes;
+                const durationInMinutes = endTimeInMinutes - startTimeInMinutes;
+
+                if (durationInMinutes > 90) {
+                    setError('Session duration cannot exceed 90 minutes');
+                    setIsLoading(false);
+                    setTimeout(() => setError(''), 5000);
+                    return;
+                }
+
+                if (durationInMinutes <= 0) {
+                    setError('End time must be after start time');
+                    setIsLoading(false);
+                    setTimeout(() => setError(''), 5000);
                     return;
                 }
             } else {
                 const selectedTimeSlot = formData.get('timeSlot');
                 
                 if (!selectedTimeSlot) {
-                    alert('Please select a time slot');
+                    setError('Please select a time slot');
+                    setIsLoading(false);
+                    setTimeout(() => setError(''), 5000);
                     return;
                 }
                 
@@ -155,16 +225,19 @@ const EditSessionForm = ({ session, onCancel, onEdit }) => {
                 }
                 router.refresh();
                 onCancel(); // Close the edit form
+            } else if (response.status === 409) {
+                const errorMessage = await response.text();
+                setError(errorMessage);
+                setTimeout(() => setError(''), 5000);
             } else {
-                if (onEdit) {
-                    onEdit(false, 'Failed to update session');
-                }
+                const errorMessage = await response.text();
+                setError(errorMessage || 'Failed to update session');
+                setTimeout(() => setError(''), 5000);
             }
         } catch (e) {
             console.error('Error updating session:', e);
-            if (onEdit) {
-                onEdit(false, 'Error updating session');
-            }
+            setError('Error updating session');
+            setTimeout(() => setError(''), 5000);
         } finally {
             setIsLoading(false);
         }
@@ -172,6 +245,35 @@ const EditSessionForm = ({ session, onCancel, onEdit }) => {
 
     return (
         <form onSubmit={handleSubmit} className="my-5 flex flex-col items-center border p-3 border-gray-200 rounded-md w-full">
+            {error && (
+                <motion.div
+                    className='flex items-start bg-red-100 text-red-800 p-3 mb-4 rounded-lg relative lg:flex w-full'
+                    role='alert'
+                    animate={{ opacity: [1, 0, 1] }}
+                    transition={{
+                        duration: 1,
+                        repeat: Infinity,
+                        repeatType: 'loop',
+                    }}
+                >
+                    <div className='flex items-center gap-3'>
+                        <svg
+                            xmlns='http://www.w3.org/2000/svg'
+                            className='w-5 h-5 shrink-0 fill-red-500 inline'
+                            viewBox='0 0 32 32'
+                        >
+                            <path
+                                d='M16 1a15 15 0 1 0 15 15A15 15 0 0 0 16 1zm6.36 20L21 22.36l-5-4.95-4.95 4.95L9.64 21l4.95-5-4.95-4.95 1.41-1.41L16 14.59l5-4.95 1.41 1.41-5 4.95z'
+                                data-original='#ea2d3f'
+                            />
+                        </svg>
+                        <span className='font-semibold text-[14px] inline-block mr-2'>
+                            Error!
+                        </span>
+                        <span className='block text-sm font-medium sm:inline'>{error}</span>
+                    </div>
+                </motion.div>
+            )}
             <div className="my-2 w-full">
                 <label htmlFor="mode" className="block text-sm font-medium text-gray-700 mb-2">Mode</label>
                 <div className="flex gap-4">
@@ -212,6 +314,7 @@ const EditSessionForm = ({ session, onCancel, onEdit }) => {
                     onChange={(e) => {
                         setSelectedSessionType(e.target.value);
                         setStudents("");
+                        setStudentsList([]);
                     }}
                     required
                 >
@@ -250,33 +353,11 @@ const EditSessionForm = ({ session, onCancel, onEdit }) => {
                         required
                     >
                         <option value="">Please select</option>
-                        {selectedMode === "online" && selectedSessionType === "onlinepersonal" && (
-                            <>
-                                <option value="Kiran">Kiran</option>
-                                <option value="Kusha">Kusha</option>
-                                <option value="Romio">Romio</option>
-                                <option value="Riya">Riya</option>
-                                <option value="Gops">Gops</option>
-                            </>
-                        )}
-                        {selectedMode === "online" && selectedSessionType === "onlineprenatal" && (
-                            <>
-                                <option value="Ammu">Ammu</option>
-                                <option value="Bina">Bina</option>
-                                <option value="Chhaya">Chhaya</option>
-                                <option value="Dipa">Dipa</option>
-                                <option value="Esha">Esha</option>
-                            </>
-                        )}
-                        {selectedMode === "offline" && selectedSessionType === "offlinepersonal" && (
-                            <>
-                                <option value="Raj">Raj</option>
-                                <option value="Ravi">Ravi</option>
-                                <option value="Simran">Simran</option>
-                                <option value="Aisha">Aisha</option>
-                                <option value="Rahul">Rahul</option>
-                            </>
-                        )}
+                        {studentsList.map((student) => (
+                            <option key={student.studentId} value={student.studentName}>
+                                {student.studentName}
+                            </option>
+                        ))}
                     </select>
                 </div>
             )}

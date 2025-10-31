@@ -1,7 +1,7 @@
 'use client'
 
 import { motion } from 'motion/react'
-import { useState, useCallback } from 'react'
+import { useState, useCallback, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import LeftBranding from '@/components/LeftBranding'
 import Link from 'next/link'
@@ -27,6 +27,15 @@ const RegistrationForm = () => {
   const [error, setError] = useState('')
   const [isLoading, setIsLoading] = useState(false)
 
+  useEffect(() => {
+    if (error) {
+      const timer = setTimeout(() => {
+        setError('')
+      }, 5000)
+      return () => clearTimeout(timer)
+    }
+  }, [error])
+
   const onSubmit = useCallback(
     async (event) => {
       event.preventDefault()
@@ -36,9 +45,9 @@ const RegistrationForm = () => {
       try {
         const formData = new FormData(event.currentTarget)
 
-        const name = formData.get('name')?.toString() || ''
-        const email = formData.get('email')?.toString() || ''
-        const password = formData.get('password')?.toString() || ''
+        const name = formData.get('name')?.toString().trim() || ''
+        const email = formData.get('email')?.toString().trim() || ''
+        const password = formData.get('password')?.toString().trim() || ''
 
         if (!name || !email || !password) {
           setError(ERROR_MESSAGES.EMPTY_FIELDS)

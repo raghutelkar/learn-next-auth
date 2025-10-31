@@ -1,5 +1,14 @@
 import { Session } from "@/model/session-model";
 
+export async function getAllSessions() {
+  try {
+    const sessions = await Session.find({}).lean();
+    return sessions;
+  } catch(e) {
+    throw new Error(e)
+  }
+}
+
 export async function createSession(session) {
   try{
     await Session.create(session);
