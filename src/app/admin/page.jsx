@@ -181,6 +181,7 @@ const AdminPage = () => {
                                 currentMonthName={getCurrentMonthName()} 
                                 totalSessionsInCurrentMonth={sortedSessions.length} 
                                 sortedSessions={sortedSessions}
+                                userRole={session?.user?.role}
                             />
                         </div>
                         

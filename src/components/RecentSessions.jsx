@@ -5,7 +5,7 @@ import { motion } from 'motion/react'
 import DeleteSessionButton from '@/components/DeleteSessionButton'
 import EditSessionButton from '@/components/EditSessionButton'
 
-const RecentSessions = ({sortedSessions}) => {
+const RecentSessions = ({sortedSessions, userRole}) => {
   const [message, setMessage] = useState(null)
   const [isSuccess, setIsSuccess] = useState(false)
   const [isDeleting, setIsDeleting] = useState(false)
@@ -219,21 +219,23 @@ const RecentSessions = ({sortedSessions}) => {
                           <strong>Student:</strong> {session.students !== 'N/A' ? <span className='bg-yellow-100 text-yellow-800 text-xs px-3 py-1 rounded-full'>{session.students}</span> : 'N/A'}
                         </div>
                       </td>
-                      <td>
-                        <div className='pb-2'>
-                        <EditSessionButton 
-                          session={session} 
-                          onEdit={handleCallback}
-                        />
-                        </div>
-                        <div className='pt-2'>
-                        <DeleteSessionButton 
-                          sessionId={session?.sessionId} 
-                          onDelete={handleCallback}
-                          onLoadingChange={handleLoadingChange}
-                        />
-                        </div>
-                      </td>
+                      {userRole !== 'admin' && (
+                        <td>
+                          <div className='pb-2'>
+                          <EditSessionButton 
+                            session={session} 
+                            onEdit={handleCallback}
+                          />
+                          </div>
+                          <div className='pt-2'>
+                          <DeleteSessionButton 
+                            sessionId={session?.sessionId} 
+                            onDelete={handleCallback}
+                            onLoadingChange={handleLoadingChange}
+                          />
+                          </div>
+                        </td>
+                      )}
                     </tr>
                       ))
                     ) : (
