@@ -18,6 +18,7 @@ const AddSessionsForm = ({ userId }) => {
   const [studentsList, setStudentsList] = useState([])
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [showSuccess, setShowSuccess] = useState(false)
+  const [error, setError] = useState('')
 
   const handleModeChange = (e) => {
     setSelectedMode(e.target.value)
@@ -172,16 +173,39 @@ const AddSessionsForm = ({ userId }) => {
         endTime = formData.get('endTime')
 
         if (!startTime || !endTime) {
-          alert('Please select both start and end times')
+          setError('Please select both start and end times')
           setIsSubmitting(false)
+          setTimeout(() => setError(''), 5000)
+          return
+        }
+
+        // Validate duration doesn't exceed 90 minutes
+        const [startHours, startMinutes] = startTime.split(':').map(Number)
+        const [endHours, endMinutes] = endTime.split(':').map(Number)
+        const startTimeInMinutes = startHours * 60 + startMinutes
+        const endTimeInMinutes = endHours * 60 + endMinutes
+        const durationInMinutes = endTimeInMinutes - startTimeInMinutes
+
+        if (durationInMinutes > 90) {
+          setError('Session duration cannot exceed 90 minutes')
+          setIsSubmitting(false)
+          setTimeout(() => setError(''), 5000)
+          return
+        }
+
+        if (durationInMinutes <= 0) {
+          setError('End time must be after start time')
+          setIsSubmitting(false)
+          setTimeout(() => setError(''), 5000)
           return
         }
       } else {
         const selectedTimeSlot = formData.get('timeSlot')
 
         if (!selectedTimeSlot) {
-          alert('Please select a time slot')
+          setError('Please select a time slot')
           setIsSubmitting(false)
+          setTimeout(() => setError(''), 5000)
           return
         }
 
@@ -241,8 +265,9 @@ const AddSessionsForm = ({ userId }) => {
       }
     } catch (e) {
       console.error('Error submitting form:', e.message)
-      alert('Error submitting session. Please try again.')
+      setError('Error submitting session. Please try again.')
       setIsSubmitting(false)
+      setTimeout(() => setError(''), 5000)
     }
   }
 
@@ -275,6 +300,35 @@ const AddSessionsForm = ({ userId }) => {
             Register your sessions
         </div>
       <div className='mx-auto shadow-xl p-6 bg-white rounded-sm'>
+        {error && (
+          <motion.div
+            className='flex items-start bg-red-100 text-red-800 p-3 mb-4 rounded-lg relative lg:flex'
+            role='alert'
+            animate={{ opacity: [1, 0, 1] }}
+            transition={{
+              duration: 1,
+              repeat: Infinity,
+              repeatType: 'loop',
+            }}
+          >
+            <div className='flex items-center gap-3'>
+              <svg
+                xmlns='http://www.w3.org/2000/svg'
+                className='w-5 h-5 shrink-0 fill-red-500 inline'
+                viewBox='0 0 32 32'
+              >
+                <path
+                  d='M16 1a15 15 0 1 0 15 15A15 15 0 0 0 16 1zm6.36 20L21 22.36l-5-4.95-4.95 4.95L9.64 21l4.95-5-4.95-4.95 1.41-1.41L16 14.59l5-4.95 1.41 1.41-5 4.95z'
+                  data-original='#ea2d3f'
+                />
+              </svg>
+              <span className='font-semibold text-[14px] inline-block mr-2'>
+                Error!
+              </span>
+              <span className='block text-sm font-medium sm:inline'>{error}</span>
+            </div>
+          </motion.div>
+        )}
         {showSuccess && (
           <motion.div
             className='flex w-full items-start bg-green-100 text-green-600 p-3 mb-8 rounded-lg relative lg:flex'
