@@ -102,14 +102,14 @@ const EditSessionForm = ({ session, onCancel, onEdit }) => {
     const maxDate = today.toISOString().split('T')[0];
     const minDate = fiveDaysAgo.toISOString().split('T')[0];
 
-    const timeSlots = [
-        { label: "6:00 AM - 7:00 AM", start: "06:00", end: "07:00" },
-        { label: "7:00 AM - 8:00 AM", start: "07:00", end: "08:00" },
-        { label: "8:00 AM - 9:00 AM", start: "08:00", end: "09:00" },
-        { label: "5:00 PM - 6:00 PM", start: "17:00", end: "18:00" },
-        { label: "6:00 PM - 7:00 PM", start: "18:00", end: "19:00" },
-        { label: "7:00 PM - 8:00 PM", start: "19:00", end: "20:00" },
-    ];
+  const timeSlots = [
+    { label: '5:30 AM - 6:30 AM', start: '05:30', end: '06:30' },
+    { label: '6:40 AM - 7:30 AM', start: '06:40', end: '07:30' },
+    { label: '7:30 AM - 8:30 AM', start: '07:30', end: '08:30' },
+    { label: '8:30 AM - 9:30 AM', start: '08:30', end: '09:30' },
+    { label: '10:00 AM - 11:00 AM', start: '10:00', end: '11:00' },
+    { label: '5:30 PM - 6:30 PM', start: '17:30', end: '18:30' },
+  ]
 
     // Check if all required fields are filled
     const isFormValid = () => {
