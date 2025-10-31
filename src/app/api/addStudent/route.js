@@ -54,6 +54,26 @@ export const POST = async (request) => {
   // Create a DB Connection
   await dbConnect();
   
+  // Check for duplicate student (same name, mode, and sessionType)
+  try {
+    const allStudents = await getAllStudents();
+    const duplicateStudent = allStudents.find(student => 
+      student.studentName.toLowerCase() === studentName.toLowerCase() &&
+      student.mode === mode &&
+      student.sessionType === sessionType
+    );
+    
+    if (duplicateStudent) {
+      return new NextResponse("Student with this name already exists for this mode and session type", {
+        status: 409, // Conflict status code
+      });
+    }
+  } catch (err) {
+    return new NextResponse(err.message, {
+      status: 500,
+    });
+  }
+  
   // Form a DB payload
   const newStudent = {
     mode,
