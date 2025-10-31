@@ -260,8 +260,15 @@ const AddSessionsForm = ({ userId }) => {
         router.refresh()
         await new Promise((resolve) => setTimeout(resolve, 100)) // Small delay to ensure refresh
         router.push('/profile')
-      } else {
+      } else if (response.status === 409) {
+        const errorMessage = await response.text()
+        setError(errorMessage)
         setIsSubmitting(false)
+        setTimeout(() => setError(''), 5000)
+      } else {
+        setError('Failed to add session. Please try again.')
+        setIsSubmitting(false)
+        setTimeout(() => setError(''), 5000)
       }
     } catch (e) {
       console.error('Error submitting form:', e.message)

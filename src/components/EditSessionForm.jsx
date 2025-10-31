@@ -225,16 +225,19 @@ const EditSessionForm = ({ session, onCancel, onEdit }) => {
                 }
                 router.refresh();
                 onCancel(); // Close the edit form
+            } else if (response.status === 409) {
+                const errorMessage = await response.text();
+                setError(errorMessage);
+                setTimeout(() => setError(''), 5000);
             } else {
-                if (onEdit) {
-                    onEdit(false, 'Failed to update session');
-                }
+                const errorMessage = await response.text();
+                setError(errorMessage || 'Failed to update session');
+                setTimeout(() => setError(''), 5000);
             }
         } catch (e) {
             console.error('Error updating session:', e);
-            if (onEdit) {
-                onEdit(false, 'Error updating session');
-            }
+            setError('Error updating session');
+            setTimeout(() => setError(''), 5000);
         } finally {
             setIsLoading(false);
         }
