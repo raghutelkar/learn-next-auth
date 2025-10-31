@@ -1,7 +1,7 @@
 'use client'
 
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 const EditSessionForm = ({ session, onCancel, onEdit }) => {
     const router = useRouter();
@@ -9,6 +9,7 @@ const EditSessionForm = ({ session, onCancel, onEdit }) => {
     const [selectedMode, setSelectedMode] = useState(session.mode || "");
     const [selectedSessionType, setSelectedSessionType] = useState(session.sessionType || "");
     const [students, setStudents] = useState(session.students || "");
+    const [studentsList, setStudentsList] = useState([]);
     const [startTime, setStartTime] = useState(new Date(session.start).toTimeString().slice(0, 5));
     const [endTime, setEndTime] = useState(new Date(session.end).toTimeString().slice(0, 5));
     
@@ -18,11 +19,53 @@ const EditSessionForm = ({ session, onCancel, onEdit }) => {
         : "";
     const [timeSlot, setTimeSlot] = useState(initialTimeSlot);
 
+    // Fetch students based on mode and session type
+    useEffect(() => {
+        const fetchStudents = async () => {
+            let mode = selectedMode;
+            let type = null;
+
+            // Determine the type based on session type
+            if (selectedMode === 'online') {
+                if (selectedSessionType === 'onlinepersonal') {
+                    type = 'personal';
+                } else if (selectedSessionType === 'onlineprenatal') {
+                    type = 'prenatal';
+                }
+            } else if (selectedMode === 'offline') {
+                if (selectedSessionType === 'offlinepersonal') {
+                    type = 'personal';
+                }
+            }
+
+            // Only fetch if we have both mode and type
+            if (mode && type) {
+                try {
+                    const response = await fetch(`/api/addStudent?mode=${mode}&type=${type}`);
+                    if (response.ok) {
+                        const data = await response.json();
+                        setStudentsList(data.students || []);
+                    } else {
+                        setStudentsList([]);
+                    }
+                } catch (error) {
+                    console.error('Error fetching students:', error);
+                    setStudentsList([]);
+                }
+            } else {
+                setStudentsList([]);
+            }
+        };
+
+        fetchStudents();
+    }, [selectedMode, selectedSessionType]);
+
     // Handle mode change and reset dependent fields
     const handleModeChange = (newMode) => {
         setSelectedMode(newMode);
         setSelectedSessionType("");
         setStudents("");
+        setStudentsList([]);
         setTimeSlot("");
     };
 
@@ -212,6 +255,7 @@ const EditSessionForm = ({ session, onCancel, onEdit }) => {
                     onChange={(e) => {
                         setSelectedSessionType(e.target.value);
                         setStudents("");
+                        setStudentsList([]);
                     }}
                     required
                 >
@@ -250,33 +294,11 @@ const EditSessionForm = ({ session, onCancel, onEdit }) => {
                         required
                     >
                         <option value="">Please select</option>
-                        {selectedMode === "online" && selectedSessionType === "onlinepersonal" && (
-                            <>
-                                <option value="Kiran">Kiran</option>
-                                <option value="Kusha">Kusha</option>
-                                <option value="Romio">Romio</option>
-                                <option value="Riya">Riya</option>
-                                <option value="Gops">Gops</option>
-                            </>
-                        )}
-                        {selectedMode === "online" && selectedSessionType === "onlineprenatal" && (
-                            <>
-                                <option value="Ammu">Ammu</option>
-                                <option value="Bina">Bina</option>
-                                <option value="Chhaya">Chhaya</option>
-                                <option value="Dipa">Dipa</option>
-                                <option value="Esha">Esha</option>
-                            </>
-                        )}
-                        {selectedMode === "offline" && selectedSessionType === "offlinepersonal" && (
-                            <>
-                                <option value="Raj">Raj</option>
-                                <option value="Ravi">Ravi</option>
-                                <option value="Simran">Simran</option>
-                                <option value="Aisha">Aisha</option>
-                                <option value="Rahul">Rahul</option>
-                            </>
-                        )}
+                        {studentsList.map((student) => (
+                            <option key={student.studentId} value={student.studentName}>
+                                {student.studentName}
+                            </option>
+                        ))}
                     </select>
                 </div>
             )}

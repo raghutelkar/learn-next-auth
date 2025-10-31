@@ -36,9 +36,9 @@ const RegistrationForm = () => {
       try {
         const formData = new FormData(event.currentTarget)
 
-        const name = formData.get('name')?.toString() || ''
-        const email = formData.get('email')?.toString() || ''
-        const password = formData.get('password')?.toString() || ''
+        const name = formData.get('name')?.toString().trim() || ''
+        const email = formData.get('email')?.toString().trim() || ''
+        const password = formData.get('password')?.toString().trim() || ''
 
         if (!name || !email || !password) {
           setError(ERROR_MESSAGES.EMPTY_FIELDS)
