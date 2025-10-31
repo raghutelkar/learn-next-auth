@@ -40,7 +40,7 @@ const AddStudentsForm = () => {
         body: JSON.stringify({
           mode: selectedMode,
           studentId: 's_' + Date.now(),
-          studentName: formData.get('studentName'),
+          studentName: formData.get('studentName').trim(),
           sessionType: selectedSessionType,
         }),
       })
