@@ -111,7 +111,7 @@ const RecentSessions = ({sortedSessions}) => {
               
               <div className='text-xl font-bold px-6 py-4 bg-gradient-to-r from-slate-600 to-slate-800 rounded-t-lg text-white shadow border-b border-gray-300 flex justify-between items-center'>
                 <span>Recent sessions</span>
-                {filteredSessions && filteredSessions.length > 0 && (
+                {sortedSessions && sortedSessions.length > 0 && (
                   <button
                     onClick={() => setShowFilters(!showFilters)}
                     className='text-sm bg-white text-slate-700 px-4 py-2 rounded hover:bg-gray-100 transition-colors flex items-center gap-2'
@@ -125,7 +125,7 @@ const RecentSessions = ({sortedSessions}) => {
               </div>
 
               {/* Filters */}
-              {showFilters && filteredSessions && filteredSessions.length > 0 && (
+              {showFilters && sortedSessions && sortedSessions.length > 0 && (
               <div className='bg-gray-50 px-5 py-3 border-b border-gray-300 flex flex-wrap gap-3 items-center'>
                 <div className='flex items-center gap-2'>
                   <label className='text-sm font-medium text-gray-700 w-12'>Time:</label>
