@@ -48,6 +48,8 @@ const AddSessionsForm = ({ userId }) => {
       } else if (selectedMode === 'offline') {
         if (selectedOfflineSessionType === 'offlinepersonal') {
           type = 'personal'
+        } else if (selectedOfflineSessionType === 'offlineprenatal') {
+          type = 'prenatal'
         }
       }
 
@@ -107,7 +109,11 @@ const AddSessionsForm = ({ userId }) => {
     { label: '7:30 AM - 8:30 AM', start: '07:30', end: '08:30' },
     { label: '8:30 AM - 9:30 AM', start: '08:30', end: '09:30' },
     { label: '10:00 AM - 11:00 AM', start: '10:00', end: '11:00' },
+    { label: '10:45 AM - 11:45 AM', start: '10:45', end: '11:45' },
+    { label: '04:30 PM - 05:15 PM', start: '16:30', end: '17:15' },
+    { label: '5:15 PM - 6:15 PM', start: '17:15', end: '18:15' },
     { label: '5:30 PM - 6:30 PM', start: '17:30', end: '18:30' },
+    { label: '6:15 PM - 7:00 PM', start: '18:15', end: '19:00' },
   ]
 
   // Check if all required fields are filled
@@ -416,9 +422,9 @@ const AddSessionsForm = ({ userId }) => {
                 }}
               >
                 <option value=''>Please select a class</option>
-                <option value='offlinegeneral'>General</option>
+                <option value='offlinegeneral'>General Adult</option>
                 <option value='offlinepersonal'>Personal</option>
-                <option value='offlineprenatal'>Semi-Prenatal</option>
+                <option value='offlineprenatal'>Prenatal</option>
                 <option value='offlinesemiprivate'>Semi-Private</option>
                 <option value='offlinekids'>Kids</option>
                 <option value='offlineteens'>Teens</option>
@@ -426,6 +432,28 @@ const AddSessionsForm = ({ userId }) => {
               </select>
             </div>
           )}
+            {selectedMode === 'offline' &&
+            selectedOfflineSessionType === 'offlineprenatal' && (
+              <div className='my-2 w-full'>
+                <label htmlFor='prenatalStudents'>
+                  Prenatal Session Students
+                </label>
+                <select
+                  className='border border-gray-500 rounded p-2 w-full bg-white outline-none text-slate-500'
+                  name='students'
+                  id='prenatalStudents'
+                  value={students}
+                  onChange={(e) => setStudents(e.target.value)}
+                >
+                  <option value=''>Please select</option>
+                  {studentsList.map((student) => (
+                    <option key={student.studentId} value={student.studentName}>
+                      {student.studentName}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            )}
           {selectedMode === 'offline' &&
             selectedOfflineSessionType === 'offlinepersonal' && (
               <div className='my-2 w-full'>

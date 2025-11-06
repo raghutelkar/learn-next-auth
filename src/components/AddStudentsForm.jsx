@@ -107,6 +107,7 @@ const AddStudentsForm = () => {
     ],
     offline: [
       { value: 'offlinepersonal', label: 'Personal' },
+      { value: 'offlineprenatal', label: 'Prenatal' },
     ],
   }
 

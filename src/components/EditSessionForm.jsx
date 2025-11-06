@@ -37,6 +37,8 @@ const EditSessionForm = ({ session, onCancel, onEdit }) => {
             } else if (selectedMode === 'offline') {
                 if (selectedSessionType === 'offlinepersonal') {
                     type = 'personal';
+                } else if (selectedSessionType === 'offlineprenatal') {
+                    type = 'prenatal';
                 }
             }
 
@@ -108,7 +110,11 @@ const EditSessionForm = ({ session, onCancel, onEdit }) => {
     { label: '7:30 AM - 8:30 AM', start: '07:30', end: '08:30' },
     { label: '8:30 AM - 9:30 AM', start: '08:30', end: '09:30' },
     { label: '10:00 AM - 11:00 AM', start: '10:00', end: '11:00' },
+    { label: '10:45 AM - 11:45 AM', start: '10:45', end: '11:45' },
+    { label: '04:30 PM - 05:15 PM', start: '16:30', end: '17:15' },
+    { label: '5:15 PM - 6:15 PM', start: '17:15', end: '18:15' },
     { label: '5:30 PM - 6:30 PM', start: '17:30', end: '18:30' },
+    { label: '6:15 PM - 7:00 PM', start: '18:15', end: '19:00' },
   ]
 
     // Check if all required fields are filled
@@ -128,8 +134,8 @@ const EditSessionForm = ({ session, onCancel, onEdit }) => {
             if (!startTime || !endTime) return false;
             if (startTime === endTime) return false;
         } else if (selectedMode === "offline") {
-            // Student required for offline personal
-            if (selectedSessionType === "offlinepersonal" && !students) {
+            // Student required for offline personal and prenatal
+            if ((selectedSessionType === "offlinepersonal" || selectedSessionType === "offlineprenatal") && !students) {
                 return false;
             }
             
@@ -326,9 +332,9 @@ const EditSessionForm = ({ session, onCancel, onEdit }) => {
                         </>
                     ) : (
                         <>
-                            <option value="offlinegeneral">General</option>
+                            <option value="offlinegeneral">General Adult</option>
                             <option value="offlinepersonal">Personal</option>
-                            <option value="offlineprenatal">Semi-Prenatal</option>
+                            <option value="offlineprenatal">Prenatal</option>
                             <option value="offlinesemiprivate">Semi-Private</option>
                             <option value="offlinekids">Kids</option>
                             <option value="offlineteens">Teens</option>
@@ -339,7 +345,7 @@ const EditSessionForm = ({ session, onCancel, onEdit }) => {
             </div>
 
             {((selectedMode === "online" && (selectedSessionType === "onlinepersonal" || selectedSessionType === "onlineprenatal")) ||
-              (selectedMode === "offline" && selectedSessionType === "offlinepersonal")) && (
+              (selectedMode === "offline" && (selectedSessionType === "offlinepersonal" || selectedSessionType === "offlineprenatal"))) && (
                 <div className="my-2 w-full">
                     <label htmlFor="students" className="block text-sm font-medium text-gray-700 mb-1">
                         Students
