@@ -29,6 +29,30 @@ const AddStudentsIcon = () => (
   </svg>
 )
 
+const StudentsListIcon = () => (
+  <svg
+    className='w-[24px] h-[24px] mr-3 fill-current'
+    width='20'
+    height='20'
+    viewBox='0 0 24 24'
+    aria-hidden='true'
+  >
+    <path d='M16 11c1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3 1.34 3 3 3zm-8 0c1.66 0 3-1.34 3-3S9.66 5 8 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.67 0-8 1.34-8 4v3h16v-3c0-2.66-5.33-4-8-4zm8 0c-.33 0-.71.02-1.11.05.56.53 1.11 1.18 1.11 1.95v3h6v-3c0-2.66-5.33-4-8-4z' />
+  </svg>
+)
+
+const ProfileIcon = () => (
+  <svg
+    xmlns='http://www.w3.org/2000/svg'
+    fill='currentColor'
+    className='w-[18px] h-[18px] mr-3'
+    viewBox='0 0 24 24'
+    aria-hidden='true'
+  >
+    <path fillRule='evenodd' d='M18.685 19.097A9.723 9.723 0 0021.75 12c0-5.385-4.365-9.75-9.75-9.75S2.25 6.615 2.25 12a9.723 9.723 0 003.065 7.097A9.716 9.716 0 0012 21.75a9.716 9.716 0 006.685-2.653zm-12.54-1.285A7.486 7.486 0 0112 15a7.486 7.486 0 015.855 2.812A8.224 8.224 0 0112 20.25a8.224 8.224 0 01-5.855-2.438zM15.75 9a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0z' clipRule='evenodd' />
+  </svg>
+)
+
 /**
  * User dropdown menu component
  */
@@ -73,7 +97,7 @@ const UserDropdown = ({ userRole }) => {
               className='text-[15px] text-slate-800 font-medium cursor-pointer flex items-center p-2 rounded-md hover:bg-gray-100 transition duration-300 ease-in-out'
               role='menuitem'
             >
-              <DashboardIcon />
+              <ProfileIcon />
               Profile
             </Link>
             <Link
@@ -83,6 +107,14 @@ const UserDropdown = ({ userRole }) => {
             >
               <AddStudentsIcon />
               Add Students
+            </Link>
+                        <Link
+              href='/students-list'
+              className='text-[15px] text-slate-800 font-medium cursor-pointer flex items-center p-2 rounded-md hover:bg-gray-100 transition duration-300 ease-in-out'
+              role='menuitem'
+            >
+              <StudentsListIcon />
+              Students List
             </Link>
           </>
         )}
@@ -103,8 +135,16 @@ const UserDropdown = ({ userRole }) => {
               className='text-[15px] text-slate-800 font-medium cursor-pointer flex items-center p-2 rounded-md hover:bg-gray-100 transition duration-300 ease-in-out'
               role='menuitem'
             >
-              <DashboardIcon />
+              <ProfileIcon />
               Profile
+            </Link>
+            <Link
+              href='/students-list'
+              className='text-[15px] text-slate-800 font-medium cursor-pointer flex items-center p-2 rounded-md hover:bg-gray-100 transition duration-300 ease-in-out'
+              role='menuitem'
+            >
+              <StudentsListIcon />
+              Students List
             </Link>
           </>
         )}
@@ -128,8 +168,46 @@ const UserDropdown = ({ userRole }) => {
               <AddStudentsIcon />
               Add Students
             </Link>
+                        <Link
+              href='/students-list'
+              className='text-[15px] text-slate-800 font-medium cursor-pointer flex items-center p-2 rounded-md hover:bg-gray-100 transition duration-300 ease-in-out'
+              role='menuitem'
+            >
+              <StudentsListIcon />
+              Students List
+            </Link>
           </>
         )}
+
+        {isAdmin && pathname === '/students-list' && (
+          <>
+            <hr className='my-2 -mx-2 border-gray-200' />
+            <Link
+              href='/admin'
+              className='text-[15px] text-slate-800 font-medium cursor-pointer flex items-center p-2 rounded-md hover:bg-gray-100 transition duration-300 ease-in-out'
+              role='menuitem'
+            >
+              <DashboardIcon />
+              Dashboard
+            </Link>
+            <Link
+              href='/profile'
+              className='text-[15px] text-slate-800 font-medium cursor-pointer flex items-center p-2 rounded-md hover:bg-gray-100 transition duration-300 ease-in-out'
+              role='menuitem'
+            >
+              <ProfileIcon />
+              Profile
+            </Link>
+                        <Link
+              href='/add-students'
+              className='text-[15px] text-slate-800 font-medium cursor-pointer flex items-center p-2 rounded-md hover:bg-gray-100 transition duration-300 ease-in-out'
+              role='menuitem'
+            >
+              <AddStudentsIcon />
+              Add Students
+            </Link>
+          </>
+  )}
         
       </div>
     </div>

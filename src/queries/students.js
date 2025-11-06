@@ -16,3 +16,11 @@ export async function createStudents(student) {
     throw new Error(e)
   }
 }
+
+export async function deleteStudent(studentId) {
+  try {
+    await Student.deleteOne({ studentId });
+  } catch(e) {
+    throw new Error(e)
+  }
+}

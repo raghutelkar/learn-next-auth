@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { createStudents, getAllStudents } from "@/queries/students";
+import { createStudents, getAllStudents, deleteStudent } from "@/queries/students";
 import { dbConnect } from "@/lib/mongo";
 
 export const GET = async (request) => {
@@ -94,4 +94,32 @@ export const POST = async (request) => {
   return new NextResponse("New Student has been added", {
     status: 201,
   });
+}
+
+export const DELETE = async (request) => {
+  try {
+    // Create a DB Connection
+    await dbConnect();
+    
+    // Get studentId from query string
+    const { searchParams } = new URL(request.url);
+    const studentId = searchParams.get('studentId');
+    
+    if (!studentId) {
+      return new NextResponse("Student ID is required", {
+        status: 400,
+      });
+    }
+    
+    // Delete the student
+    await deleteStudent(studentId);
+    
+    return new NextResponse("Student has been deleted", {
+      status: 200,
+    });
+  } catch (err) {
+    return new NextResponse(err.message, {
+      status: 500,
+    });
+  }
 }
