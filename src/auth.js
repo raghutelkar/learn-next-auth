@@ -5,6 +5,7 @@ import CredentialsProvider from "next-auth/providers/credentials";
 
 import { User } from "./model/user-model";
 import bcrypt from "bcryptjs";
+import { dbConnect } from "./lib/mongo";
 
 
 export const {
@@ -16,6 +17,8 @@ export const {
     callbacks: {
         async signIn({ user, account, profile }) {
             try {
+                await dbConnect();
+                
                 if (account.provider === "credentials") {
                     return true;
                 }
@@ -67,6 +70,8 @@ export const {
                 if (credentials === null) return null;
                 
                 try {
+                    await dbConnect();
+                    
                     const user = await User.findOne({
                         email: credentials?.email
                     })
