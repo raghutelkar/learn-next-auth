@@ -11,7 +11,7 @@ const AddStudentsPage = () => {
 
   useEffect(() => {
       if (!session || session?.user?.role !== 'admin') {
-          redirect('/');
+          redirect('/add-students');
       }
   }, [session]);
   return (

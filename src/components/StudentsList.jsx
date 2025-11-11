@@ -260,11 +260,14 @@ const StudentsList = () => {
                     </td>
                   </tr>
                 ) : filteredStudents && filteredStudents.length > 0 ? (
-                  filteredStudents.map((student) => (
+                  filteredStudents.map((student, idx) => (
                     <tr
                       key={student.studentId}
                       className='relative transform scale-100 text-sm py-1 border-b-2 border-blue-100 cursor-default'
                     >
+                      <td className='pl-4 lg:pl-6 whitespace-no-wrap'>
+                        {idx + 1}.
+                      </td>
                       <td className='pl-4 lg:pl-6 whitespace-no-wrap'>
                         <div className='text-gray-900 font-medium text-base'>{student.studentName}</div>
                       </td>
