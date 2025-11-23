@@ -26,6 +26,7 @@ const RegistrationForm = () => {
   const router = useRouter()
   const [error, setError] = useState('')
   const [isLoading, setIsLoading] = useState(false)
+  const [showPassword, setShowPassword] = useState(false)
 
   useEffect(() => {
     if (error) {
@@ -179,17 +180,39 @@ const RegistrationForm = () => {
               <label className={LABEL_STYLES} htmlFor='password'>
                 Password
               </label>
-              <input
-                name='password'
-                type='password'
-                id='password'
-                required
-                autoComplete='off'
-                disabled={isLoading}
-                className={INPUT_STYLES}
-                placeholder='Create a password'
-                aria-label='Password'
-              />
+              <div className='relative'>
+                <input
+                  name='password'
+                  type={showPassword ? 'text' : 'password'}
+                  id='password'
+                  required
+                  autoComplete='off'
+                  disabled={isLoading}
+                  className={INPUT_STYLES + ' pr-12'}
+                  placeholder='Create a password'
+                  aria-label='Password'
+                />
+                <button
+                  type='button'
+                  onClick={() => setShowPassword((prev) => !prev)}
+                  className='absolute inset-y-0 right-3 flex items-center text-slate-600 hover:text-slate-900 focus:outline-none'
+                  aria-label={showPassword ? 'Hide password' : 'Show password'}
+                >
+                  {showPassword ? (
+                    <svg xmlns='http://www.w3.org/2000/svg' className='h-5 w-5' viewBox='0 0 24 24' fill='none' stroke='currentColor' strokeWidth='2' strokeLinecap='round' strokeLinejoin='round'>
+                      <path d='M17.94 17.94A10.94 10.94 0 0 1 12 20c-7 0-11-8-11-8a21.77 21.77 0 0 1 5.06-6.94M9.88 9.88a3 3 0 0 0 4.24 4.24' />
+                      <path d='M1 1l22 22' />
+                      <path d='M6.1 2.1A11 11 0 0 1 12 4c7 0 11 8 11 8a21.82 21.82 0 0 1-2.72 3.94' />
+                      <path d='M12 12a3 3 0 0 1 3-3' />
+                    </svg>
+                  ) : (
+                    <svg xmlns='http://www.w3.org/2000/svg' className='h-5 w-5' viewBox='0 0 24 24' fill='none' stroke='currentColor' strokeWidth='2' strokeLinecap='round' strokeLinejoin='round'>
+                      <path d='M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8Z' />
+                      <circle cx='12' cy='12' r='3' />
+                    </svg>
+                  )}
+                </button>
+              </div>
             </div>
           </div>
 
